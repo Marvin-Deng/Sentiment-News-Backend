@@ -3,10 +3,20 @@ from services.ArticleService import process_articles
 from services.TickerService import update_tickers
 from views.ArticleView import ArticleView
 from models.ResponseModel import ResponseModel
+from fastapi.middleware.cors import CORSMiddleware
 from db import init_db
 from fastapi import FastAPI
+import os
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=os.getenv('CLIENT_URL'),
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.on_event("startup")
 async def startup():
