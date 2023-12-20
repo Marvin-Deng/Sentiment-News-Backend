@@ -12,7 +12,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=os.getenv('CLIENT_URL'),
+    allow_origins=[os.getenv('CLIENT_URL'), "http://localhost:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -21,7 +21,7 @@ app.add_middleware(
 @app.on_event("startup")
 async def startup():
     await init_db()
-    # schedule_background_tasks()
+    schedule_background_tasks()
 
 @app.get('/api/articles/{page}', response_model=ResponseModel)
 async def get_article(page: int):
@@ -29,8 +29,8 @@ async def get_article(page: int):
 
 def schedule_background_tasks():
     scheduler = AsyncIOScheduler()
-    scheduler.add_job(process_articles_job, 'cron', hour=23, minute=32)
-    scheduler.add_job(update_tickers_job, 'cron', hour=20, minute=56)
+    scheduler.add_job(process_articles_job, 'cron', hour=14, minute=0)
+    scheduler.add_job(update_tickers_job, 'cron', hour=14, minute=10)
     scheduler.start()
 
 async def process_articles_job():
@@ -38,7 +38,3 @@ async def process_articles_job():
 
 async def update_tickers_job():
     await update_tickers()
-
-@app.get("/")
-async def root():
-    return {"greeting": "Hello, World!", "message": "Welcome to FastAPI!"}

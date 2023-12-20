@@ -35,11 +35,11 @@ class TickerController:
         
     @classmethod
     async def update_tickers(cls, date_str):
-            
+        
         try:
             tickers = await TickerModel.filter(market_date=date_str, open_price=None, close_price=None)
             for ticker in tickers:
-                open_price, close_price = await StockUtils.get_open_close(ticker, date_str)
+                open_price, close_price = StockUtils.get_open_close(ticker, date_str)
                 ticker.open_price = open_price
                 ticker.close_price = close_price
                 await ticker.save()
