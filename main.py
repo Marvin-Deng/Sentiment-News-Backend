@@ -29,8 +29,9 @@ async def get_article(page: int):
 
 def schedule_background_tasks():
     scheduler = AsyncIOScheduler()
-    scheduler.add_job(process_articles_job, 'cron', hour=14, minute=0)
-    scheduler.add_job(update_tickers_job, 'cron', hour=14, minute=10)
+    scheduler.add_job(process_articles_job, 'cron', hour=6, minute=0)
+    scheduler.add_job(update_tickers_job, 'cron', hour=14, minute=0)
+    scheduler.add_job(process_articles_job, 'cron', hour=20, minute=0)
     scheduler.start()
 
 async def process_articles_job():

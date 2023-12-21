@@ -29,7 +29,7 @@ class ArticleUtils:
         url = article['url']
         summary = article['summary']
         ticker = article['related']
-        sentiment = ArticleUtils.evaluate_sentiment(url, summary)
+        sentiment = ArticleUtils.evaluate_sentiment(summary, title)
 
         article_info = {
             "id": id,
@@ -110,16 +110,15 @@ class ArticleUtils:
         return sentiment
 
     @staticmethod
-    def evaluate_sentiment(url, summary):
-        text = ArticleUtils.extract_text(url)
-
-        sentiment_json = ArticleUtils.get_sentiment(text)
-        if (sentiment_json):
-            return ArticleUtils.extract_sentiment(sentiment_json)
+    def evaluate_sentiment(summary, title):
 
         summary_json = ArticleUtils.get_sentiment(summary)
         if (summary_json):
             return ArticleUtils.extract_sentiment(summary_json)
+        
+        sentiment_json = ArticleUtils.get_sentiment(title)
+        if (sentiment_json):
+            return ArticleUtils.extract_sentiment(sentiment_json)
 
         return "neutral"
 
