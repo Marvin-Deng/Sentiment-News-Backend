@@ -1,4 +1,5 @@
 from models.ArticleModel import ArticleModel, SentimentEnum
+from models.TickerModel import TickerModel
 from controllers.TickerController import TickerController
 from utils.article import ArticleUtils
 import logging
@@ -8,8 +9,8 @@ logging.basicConfig(filename='error.log', level=logging.ERROR)
 
 class ArticleController:
 
-    @classmethod
-    async def create_article(cls, article):
+    @staticmethod
+    async def create_article(article):
         existing_article = await ArticleModel.filter(article_id=article['id'])
 
         if existing_article:
@@ -39,8 +40,8 @@ class ArticleController:
 
         return "Created New Article", new_article, 201
     
-    @classmethod
-    async def fetch_articles(cls, page):
+    @staticmethod
+    async def fetch_articles(page):
         try:
             articles_list =  await ArticleController.convert_articles_to_json(await ArticleModel.get_paged_articles(page))
             return "Successfully Queried Articles", articles_list, 200
@@ -72,5 +73,11 @@ class ArticleController:
             articles_json_list.append(article)
 
         return articles_json_list
+    
+    @staticmethod
+    async def remove_articles(one_week_ago_date):
+        tickers = await TickerModel.filter(market_date=one_week_ago_date)
 
-        
+        for ticker in tickers:
+            await ArticleModel.filter(ticker=ticker).delete()
+            await ticker.delete()

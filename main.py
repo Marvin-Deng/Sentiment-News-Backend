@@ -1,5 +1,5 @@
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from services.ArticleService import process_articles
+from services.ArticleService import process_articles, remove_articles
 from services.TickerService import update_tickers
 from views.ArticleView import ArticleView
 from models.ResponseModel import ResponseModel
@@ -30,8 +30,9 @@ async def get_article(page: int):
 def schedule_background_tasks():
     scheduler = AsyncIOScheduler()
     scheduler.add_job(process_articles_job, 'cron', hour=6, minute=0)
-    scheduler.add_job(update_tickers_job, 'cron', hour=13, minute=10)
+    scheduler.add_job(update_tickers_job, 'cron', hour=14, minute=0)
     scheduler.add_job(process_articles_job, 'cron', hour=20, minute=0)
+    scheduler.add_job(remove_articles_job, 'cron', hour=5, minute=0)
     scheduler.start()
 
 async def process_articles_job():
@@ -39,3 +40,6 @@ async def process_articles_job():
 
 async def update_tickers_job():
     await update_tickers()
+
+async def remove_articles_job():
+    await remove_articles()

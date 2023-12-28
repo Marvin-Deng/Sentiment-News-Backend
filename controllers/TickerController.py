@@ -7,8 +7,8 @@ logging.basicConfig(filename='error.log', level=logging.ERROR)
 
 class TickerController:
 
-    @classmethod
-    async def create_ticker(cls, ticker, publication_datetime):
+    @staticmethod
+    async def create_ticker(ticker, publication_datetime):
         market_date = StockUtils.get_market_date(publication_datetime).strftime("%Y-%m-%d")
         
         existing_ticker = await TickerModel.filter(ticker=ticker, market_date=market_date)
@@ -33,8 +33,8 @@ class TickerController:
         
         return "Created New Ticker", new_ticker, 201
         
-    @classmethod
-    async def update_tickers(cls, date_str):
+    @staticmethod
+    async def update_tickers(date_str):
         try:
             tickers = await TickerModel.filter(market_date=date_str, open_price=None, close_price=None)
             for ticker_model in tickers:
