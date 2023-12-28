@@ -12,8 +12,3 @@ class TickerModel(Model):
 
     class Meta:
         table = "ticker_model"
-
-
-    
-    
-    

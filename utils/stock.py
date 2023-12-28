@@ -73,7 +73,3 @@ class StockUtils:
             close_price = eod_data["data"][0]["close"]
             
         return open_price, close_price
-            
-
-        
-    

@@ -29,11 +29,3 @@ class ArticleModel(Model):
         page_size = 10
         offset = (page - 1) * page_size
         return await cls.all().order_by('-publication_datetime').offset(offset).limit(page_size).all()
-    
-    
-    
-    
-    
-
-    
-    
