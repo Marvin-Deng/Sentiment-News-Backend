@@ -41,9 +41,10 @@ class ArticleController:
         return "Created New Article", new_article, 201
     
     @staticmethod
-    async def fetch_articles(page):
+    async def fetch_articles(page, search_query, tickers, sentiment, price_action):
         try:
-            articles_list =  await ArticleController.convert_articles_to_json(await ArticleModel.get_paged_articles(page))
+            article_models = await ArticleModel.get_paged_articles(page, search_query, tickers, sentiment, price_action)
+            articles_list =  await ArticleController.convert_articles_to_json(article_models)
             return "Successfully Queried Articles", articles_list, 200
 
         except Exception as e:

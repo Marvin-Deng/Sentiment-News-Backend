@@ -5,7 +5,7 @@ from views.ArticleView import ArticleView
 from models.ResponseModel import ResponseModel
 from fastapi.middleware.cors import CORSMiddleware
 from db import init_db
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 import os
 
 app = FastAPI()
@@ -23,9 +23,21 @@ async def startup():
     await init_db()
     schedule_background_tasks()
 
-@app.get('/api/articles/{page}', response_model=ResponseModel)
-async def get_article(page: int):
-    return await ArticleView.get_articles(page)
+@app.get('/api/articles', response_model=ResponseModel)
+async def get_articles(
+    page: int = Query(..., description="Page number", gt=0),
+    search_query: str = Query(..., description="Search query"),
+    tickers: list = Query(..., description="List of tickers"),
+    sentiment: str = Query(..., description="Sentiment"),
+    price_action: str = Query(..., description="Price action"),
+):
+    return await ArticleView.get_articles(
+        page=page,
+        search_query=search_query,
+        tickers=tickers,
+        sentiment=sentiment,
+        price_action=price_action
+    )
 
 def schedule_background_tasks():
     scheduler = AsyncIOScheduler()

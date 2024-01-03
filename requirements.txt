@@ -26,6 +26,7 @@ pydantic-core==2.6.3
 pypika-tortoise==0.1.6
 python-dateutil==2.8.2
 python-dotenv==1.0.0
+python-multipart==0.0.6
 pytz==2023.3.post1
 requests==2.31.0
 six==1.16.0
