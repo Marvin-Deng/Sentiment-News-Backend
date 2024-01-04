@@ -1,6 +1,7 @@
 from typing import List, Optional
 from pydantic import BaseModel
 
+
 class Article(BaseModel):
     title: str
     image_url: str
@@ -13,7 +14,9 @@ class Article(BaseModel):
     open_price: Optional[float]
     close_price: Optional[float]
 
+
 class ResponseModel(BaseModel):
     message: str
     articles: List[Article]
+    cursor: int
     code: int

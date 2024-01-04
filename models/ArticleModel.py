@@ -5,10 +5,12 @@ from tortoise.fields import (
 from enum import Enum
 import re
 
+
 class SentimentEnum(str, Enum):
     POSITIVE = 'Positive'
     NEGATIVE = 'Negative'
     NEUTRAL = 'Neutral'
+
 
 class ArticleModel(Model):
     id = IntField(pk=True, generated=True)
@@ -25,14 +27,12 @@ class ArticleModel(Model):
         table = "article_model"
 
     @classmethod
-    async def get_paged_articles(cls, page, search_query, tickers, sentiment, price_action):
+    async def get_paged_articles(cls, cursor, search_query, tickers_set, sentiment, price_action):
+        PAGE_SIZE = 10
         filtered_articles = []
         keywords_set = cls.split_and_clean_string(search_query)
-        tickers_set = set(ticker.lower() for ticker in tickers)
-        page_size = 10
-        cursor = 0
 
-        while len(filtered_articles) < page_size:
+        while len(filtered_articles) < PAGE_SIZE:
             article = await cls.get_next_article(cursor)
 
             if not article:
@@ -40,25 +40,41 @@ class ArticleModel(Model):
 
             ticker_obj = await article.ticker.first()
             ticker_string = ticker_obj.ticker.lower() if ticker_obj else ""
+            open_price, close_price = ticker_obj.open_price, ticker_obj.close_price
             cursor += 1
-            if (keywords_set and not cls.is_match_search_query(article, ticker_string, keywords_set) or
-                tickers_set and ticker_string not in tickers_set or
-                sentiment and article.sentiment.lower() != sentiment.lower()):
+
+            if (not cls.is_match_search_query(article.title, ticker_string, keywords_set) or
+                    not cls.is_match_tickers(tickers_set, ticker_string) or
+                    not cls.is_match_sentiment(sentiment, article.sentiment) or
+                    not cls.is_match_price_action(price_action, open_price, close_price)):
                 continue
 
             filtered_articles.append(article)
 
-        start_index = (page - 1) * page_size
-        end_index = start_index + page_size
-        return filtered_articles[start_index:end_index]
+        return filtered_articles, cursor
 
     @staticmethod
-    def is_match_search_query(article, ticker_string, keywords_set):
-        if ticker_string in keywords_set:
+    def is_match_search_query(title, ticker_string, keywords_set):
+        if not keywords_set or ticker_string in keywords_set:
             return True
 
-        title_words = ArticleModel.split_and_clean_string(article.title)
+        title_words = ArticleModel.split_and_clean_string(title)
         return any(word in keywords_set for word in title_words)
+
+    @staticmethod
+    def is_match_tickers(tickers_set, ticker_string):
+        return not tickers_set or ticker_string in tickers_set
+
+    @staticmethod
+    def is_match_sentiment(sentiment, article_sentiment):
+        return not sentiment or article_sentiment.lower() == sentiment.lower()
+
+    @staticmethod
+    def is_match_price_action(price_action, open_price, close_price):
+        return (not price_action or
+                (price_action == "Positive" and open_price < close_price) or
+                (price_action == "Negative" and open_price > close_price) or
+                (price_action == "NA" and open_price is None and close_price is None))
 
     @staticmethod
     async def get_next_article(cursor):

@@ -7,6 +7,7 @@ import traceback
 
 logging.basicConfig(filename='error.log', level=logging.ERROR)
 
+
 class ArticleController:
 
     @staticmethod
@@ -20,7 +21,7 @@ class ArticleController:
             article_data = ArticleUtils.get_article_info(article)
 
             _, ticker_object, _ = await TickerController.create_ticker(article_data['ticker'], article_data['publication_datetime'])
-                
+
             new_article = ArticleModel(
                 article_id=article_data['id'],
                 title=article_data['title'],
@@ -39,20 +40,20 @@ class ArticleController:
             return "Internal Server Error Creating Articles", None, 500
 
         return "Created New Article", new_article, 201
-    
+
     @staticmethod
-    async def fetch_articles(page, search_query, tickers, sentiment, price_action):
+    async def fetch_articles(cursor, search_query, tickers_set, sentiment, price_action):
         try:
-            article_models = await ArticleModel.get_paged_articles(page, search_query, tickers, sentiment, price_action)
-            articles_list =  await ArticleController.convert_articles_to_json(article_models)
-            return "Successfully Queried Articles", articles_list, 200
+            article_models, cursor = await ArticleModel.get_paged_articles(cursor, search_query, tickers_set, sentiment, price_action)
+            articles_list = await ArticleController.convert_articles_to_json(article_models)
+            return "Successfully Queried Articles", articles_list, cursor, 200
 
         except Exception as e:
             error_message = f"Internal Service Error: {e}"
             logging.error(error_message)
             logging.error(traceback.format_exc())
-            return error_message, [], 500
-    
+            return error_message, [], 0, 500
+
     @staticmethod
     async def convert_articles_to_json(articles_list):
         articles_json_list = []
@@ -74,7 +75,7 @@ class ArticleController:
             articles_json_list.append(article)
 
         return articles_json_list
-    
+
     @staticmethod
     async def remove_articles(one_week_ago_date):
         tickers = await TickerModel.filter(market_date=one_week_ago_date)

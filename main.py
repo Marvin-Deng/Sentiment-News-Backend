@@ -25,14 +25,14 @@ async def startup():
 
 @app.get('/api/articles', response_model=ResponseModel)
 async def get_articles(
-    page: int = Query(..., description="Page number", gt=0),
+    cursor: int = Query(..., description="Page number", ge=0),
     search_query: str = Query(..., description="Search query"),
-    tickers: list = Query(..., description="List of tickers"),
+    tickers: str = Query(..., description="String of tickers"),
     sentiment: str = Query(..., description="Sentiment"),
     price_action: str = Query(..., description="Price action"),
 ):
     return await ArticleView.get_articles(
-        page=page,
+        cursor=cursor,
         search_query=search_query,
         tickers=tickers,
         sentiment=sentiment,
