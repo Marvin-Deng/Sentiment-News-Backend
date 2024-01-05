@@ -6,6 +6,7 @@ class ArticleView:
 
     @staticmethod
     async def get_articles(cursor, search_query, tickers, sentiment, price_action):
+        cursor = cursor or 0
         search_query = search_query or ""
         tickers_set = set(ticker.lower() for ticker in tickers.split(
             ',')) if tickers and any(tickers) else set()

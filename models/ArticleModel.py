@@ -33,22 +33,23 @@ class ArticleModel(Model):
         keywords_set = cls.split_and_clean_string(search_query)
 
         while len(filtered_articles) < PAGE_SIZE:
+            cursor += 1
             article = await cls.get_next_article(cursor)
 
             if not article:
-                break
+                return [], 0
 
-            ticker_obj = await article.ticker.first()
-            ticker_string = ticker_obj.ticker.lower() if ticker_obj else ""
-            open_price, close_price = ticker_obj.open_price, ticker_obj.close_price
-            cursor += 1
+            # Extract ticker fields for the article
+            ticker_string, open_price, close_price = await cls.get_ticker_fields(article)
 
+            # If the article doesn't match the search conditions, skip it
             if (not cls.is_match_search_query(article.title, ticker_string, keywords_set) or
                     not cls.is_match_tickers(tickers_set, ticker_string) or
                     not cls.is_match_sentiment(sentiment, article.sentiment) or
                     not cls.is_match_price_action(price_action, open_price, close_price)):
                 continue
 
+            # Add an article when it matches the search condition
             filtered_articles.append(article)
 
         return filtered_articles, cursor
@@ -71,18 +72,25 @@ class ArticleModel(Model):
 
     @staticmethod
     def is_match_price_action(price_action, open_price, close_price):
-        return (not price_action or
-                (price_action == "Positive" and open_price < close_price) or
-                (price_action == "Negative" and open_price > close_price) or
-                (price_action == "NA" and open_price is None and close_price is None))
+        if not price_action:
+            return True
+
+        if open_price and close_price:
+            return ((price_action == "Positive" and open_price < close_price) or
+                    (price_action == "Negative" and open_price > close_price))
+
+        return price_action == "NA"
 
     @staticmethod
     async def get_next_article(cursor):
-        if cursor is None:
-            cursor = 0
+        return await ArticleModel.filter().offset(cursor).limit(1).first()
 
-        next_article = await ArticleModel.all().offset(cursor).limit(1).first()
-        return next_article
+    @staticmethod
+    async def get_ticker_fields(article):
+        ticker_obj = await article.ticker.first()
+        ticker_string = ticker_obj.ticker.lower() if ticker_obj else ""
+        open_price, close_price = ticker_obj.open_price, ticker_obj.close_price
+        return ticker_string, open_price, close_price
 
     @staticmethod
     def split_and_clean_string(input_string):
