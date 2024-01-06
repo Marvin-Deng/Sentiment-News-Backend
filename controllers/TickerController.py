@@ -36,7 +36,7 @@ class TickerController:
     @staticmethod
     async def update_tickers(date_str):
         try:
-            tickers = await TickerModel.filter(market_date=date_str, open_price=None, close_price=None)
+            tickers = await TickerModel.filter(market_date=date_str)
             for ticker_model in tickers:
                 open_price, close_price = StockUtils.get_open_close(ticker_model.ticker, date_str)
                 ticker_model.open_price = open_price
