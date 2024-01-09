@@ -2,8 +2,8 @@ from tortoise.models import Model
 from tortoise.fields import (
     IntField, CharField, TextField, ForeignKeyField, CharEnumField
 )
+from utils.article import ArticleUtils
 from enum import Enum
-import re
 
 
 class SentimentEnum(str, Enum):
@@ -30,7 +30,7 @@ class ArticleModel(Model):
     async def get_paged_articles(cls, cursor, search_query, tickers_set, sentiment, price_action):
         PAGE_SIZE = 10
         filtered_articles = []
-        keywords_set = cls.split_and_clean_string(search_query)
+        keywords_set = set(ArticleUtils.get_list_without_symbols(search_query))
 
         while len(filtered_articles) < PAGE_SIZE:
             cursor += 1
@@ -59,7 +59,7 @@ class ArticleModel(Model):
         if not keywords_set or ticker_string in keywords_set:
             return True
 
-        title_words = ArticleModel.split_and_clean_string(title)
+        title_words = ArticleUtils.get_list_without_symbols(title)
         return any(word in keywords_set for word in title_words)
 
     @staticmethod
@@ -91,10 +91,3 @@ class ArticleModel(Model):
         ticker_string = ticker_obj.ticker.lower() if ticker_obj else ""
         open_price, close_price = ticker_obj.open_price, ticker_obj.close_price
         return ticker_string, open_price, close_price
-
-    @staticmethod
-    def split_and_clean_string(input_string):
-        pattern = re.compile(r'[^A-Za-z0-9_]')
-        cleaned_query = re.sub(pattern, '', input_string).lower()
-        words_array = re.findall(r'\b\w+\b', cleaned_query)
-        return set(words_array)

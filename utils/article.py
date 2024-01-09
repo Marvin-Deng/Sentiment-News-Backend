@@ -3,6 +3,7 @@ import requests
 from datetime import datetime, timezone
 from dotenv import load_dotenv
 import os
+import re
 
 load_dotenv()
 
@@ -23,7 +24,8 @@ class ArticleUtils:
     def get_article_info(article):
         id = article['id']
         title = article['headline']
-        publication_datetime = ArticleUtils.convert_unix_to_utc(article['datetime'])
+        publication_datetime = ArticleUtils.convert_unix_to_utc(
+            article['datetime'])
         parsed_datetime = datetime.fromisoformat(publication_datetime)
         image_url = article['image']
         url = article['url']
@@ -115,7 +117,7 @@ class ArticleUtils:
         summary_json = ArticleUtils.get_sentiment(summary)
         if (summary_json):
             return ArticleUtils.extract_sentiment(summary_json)
-        
+
         sentiment_json = ArticleUtils.get_sentiment(title)
         if (sentiment_json):
             return ArticleUtils.extract_sentiment(sentiment_json)
@@ -138,3 +140,9 @@ class ArticleUtils:
 
         else:
             return input_datetime.strftime("%B {}, %Y at %H:%M UTC".format(day_without_leading_zero))
+
+    @staticmethod
+    def get_list_without_symbols(input_string):
+        words = input_string.split()
+        processed_words = [re.sub(r'\W+', '', word.lower()) for word in words]
+        return processed_words
