@@ -18,10 +18,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.on_event("startup")
 async def startup():
     await init_db()
     schedule_background_tasks()
+
 
 @app.get('/api/articles', response_model=ResponseModel)
 async def get_articles(
@@ -39,6 +41,7 @@ async def get_articles(
         price_action=price_action
     )
 
+
 def schedule_background_tasks():
     scheduler = AsyncIOScheduler()
     scheduler.add_job(process_articles_job, 'cron', hour=13, minute=45)
@@ -46,11 +49,14 @@ def schedule_background_tasks():
     scheduler.add_job(remove_articles_job, 'cron', hour=5, minute=0)
     scheduler.start()
 
+
 async def process_articles_job():
     await process_articles()
 
+
 async def update_tickers_job():
     await update_tickers()
+
 
 async def remove_articles_job():
     await remove_articles()

@@ -2,12 +2,13 @@ from utils.article import ArticleUtils
 from controllers.ArticleController import ArticleController
 import datetime
 
-async def process_articles():   
+
+async def process_articles():
     date_today = datetime.date.today().strftime("%Y-%m-%d")
 
     tickers = [
         "AAPL", "MSFT", "AMZN", "GOOGL", "TSLA", "JPM", "V", "FB", "NVDA", "NFLX",
-        "DIS", "PYPL", "BA", "JNJ", "KO", "PFE", "AMD", "XOM", "T", "WMT"   
+        "DIS", "PYPL", "BA", "JNJ", "KO", "PFE", "AMD", "XOM", "T", "WMT"
     ]
 
     for ticker in tickers:
@@ -15,6 +16,7 @@ async def process_articles():
         for article in articles:
             if (article['image']):
                 await ArticleController.create_article(article)
+
 
 async def remove_articles():
     one_week_ago = datetime.date.today() - datetime.timedelta(days=6)
