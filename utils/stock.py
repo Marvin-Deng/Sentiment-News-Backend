@@ -12,14 +12,11 @@ class StockUtils:
     @staticmethod
     def get_eod_data(ticker, date_str):
         try:
-            base_url = "http://api.marketstack.com/v1/eod"
-            url = f"{base_url}/{date_str}"
-            params = {
-                "access_key": os.getenv("MARKETSTACK_KEY"),
-                "symbols": ticker
+            url = f"https://api.tiingo.com/tiingo/daily/{ticker}/prices?startDate={date_str}&endDate={date_str}&token={os.getenv('TIINGO_TOKEN')}"
+            headers = {
+                'Content-Type': 'application/json'
             }
-            response = requests.get(url, params=params)
-            response.raise_for_status()
+            response = requests.get(url, headers=headers)
             return response.json()
 
         except Exception:
@@ -71,8 +68,8 @@ class StockUtils:
         eod_data = StockUtils.get_eod_data(ticker, date)
         open_price, close_price = None, None
 
-        if eod_data is not None and "data" in eod_data and len(eod_data["data"]) > 0:
-            open_price = eod_data["data"][0]["open"]
-            close_price = eod_data["data"][0]["close"]
+        if eod_data is not None and len(eod_data) > 0:
+            open_price = eod_data[0]['open']
+            close_price = eod_data[0]['close']
 
         return open_price, close_price
