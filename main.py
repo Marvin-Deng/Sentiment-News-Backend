@@ -1,12 +1,15 @@
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, Query
+import os
+
 from services.ArticleService import process_articles, remove_articles
 from services.TickerService import update_tickers
 from views.ArticleView import ArticleView
+from utils.stock import StockUtils
 from models.ResponseModel import ResponseModel
-from fastapi.middleware.cors import CORSMiddleware
 from db import init_db
-from fastapi import FastAPI, Query
-import os
+
 
 app = FastAPI()
 
@@ -40,6 +43,11 @@ async def get_articles(
         sentiment=sentiment,
         price_action=price_action
     )
+
+
+@app.get('/api/tickers')
+def get_tickers() -> list[str]:
+    return StockUtils.get_all_tickers()
 
 
 def schedule_background_tasks():
