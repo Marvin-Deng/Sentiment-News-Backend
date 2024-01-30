@@ -1,6 +1,7 @@
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, Query
+from typing import List
 import os
 
 from services.ArticleService import process_articles, remove_articles
@@ -46,7 +47,7 @@ async def get_articles(
 
 
 @app.get('/api/tickers')
-def get_tickers() -> list[str]:
+def get_tickers() -> List[str]:
     return StockUtils.get_all_tickers()
 
 
