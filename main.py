@@ -36,13 +36,17 @@ async def get_articles(
     tickers: str = Query(..., description="String of tickers"),
     sentiment: str = Query(..., description="Sentiment"),
     price_action: str = Query(..., description="Price action"),
+    start_date: str = Query(..., description="Starting date of the filter"),
+    end_date: str = Query(..., description="Ending date of the filter"),
 ):
     return await ArticleView.get_articles(
         cursor=cursor,
         search_query=search_query,
         tickers=tickers,
         sentiment=sentiment,
-        price_action=price_action
+        price_action=price_action,
+        start_date=start_date,
+        end_date=end_date
     )
 
 
@@ -54,7 +58,7 @@ def get_tickers() -> List[str]:
 def schedule_background_tasks():
     scheduler = AsyncIOScheduler()
     scheduler.add_job(process_articles_job, 'cron', hour=14, minute=0)
-    scheduler.add_job(update_tickers_job, 'cron', hour=14, minute=10)
+    scheduler.add_job(update_tickers_job, 'cron', hour=14, minute=30)
     scheduler.add_job(remove_articles_job, 'cron', hour=5, minute=0)
     scheduler.start()
 

@@ -2,7 +2,9 @@ from tortoise.models import Model
 from tortoise.fields import (
     IntField, CharField, TextField, ForeignKeyField, CharEnumField
 )
+
 from utils.article import ArticleUtils
+from utils.date import DateUtils
 from enum import Enum
 
 
@@ -27,7 +29,7 @@ class ArticleModel(Model):
         table = "article_model"
 
     @classmethod
-    async def get_paged_articles(cls, cursor, search_query, tickers_set, sentiment, price_action):
+    async def get_paged_articles(cls, cursor, search_query, tickers_set, sentiment, price_action, start_date, end_date):
         PAGE_SIZE = 10
         filtered_articles = []
         keywords_set = set(ArticleUtils.get_list_without_symbols(search_query))
@@ -40,13 +42,21 @@ class ArticleModel(Model):
                 return [], 0
 
             # Extract ticker fields for the article
-            ticker_string, open_price, close_price = await cls.get_ticker_fields(article)
+            ticker_string, open_price, close_price, market_date = await cls.get_ticker_fields(article)
 
-            # If the article doesn't match the search conditions, skip it
-            if (not cls.is_match_search_query(article.title, ticker_string, keywords_set) or
-                    not cls.is_match_tickers(tickers_set, ticker_string) or
-                    not cls.is_match_sentiment(sentiment, article.sentiment) or
-                    not cls.is_match_price_action(price_action, open_price, close_price)):
+            if not cls.is_match_search_query(article.title, ticker_string, keywords_set):
+                continue
+
+            if not cls.is_match_tickers(tickers_set, ticker_string):
+                continue
+
+            if not cls.is_match_sentiment(sentiment, article.sentiment):
+                continue
+
+            if not cls.is_match_price_action(price_action, open_price, close_price):
+                continue
+
+            if not cls.in_date_range(market_date, start_date, end_date):
                 continue
 
             # Add an article when it matches the search condition
@@ -82,6 +92,14 @@ class ArticleModel(Model):
         return price_action == "NA"
 
     @staticmethod
+    def in_date_range(market_date, start_date, end_date):
+        market_date_obj = DateUtils.convert_string_to_datetime(market_date)
+        start_date_obj = DateUtils.convert_string_to_datetime(start_date)
+        end_date_obj = DateUtils.convert_string_to_datetime(end_date)
+
+        return start_date_obj <= market_date_obj <= end_date_obj
+
+    @staticmethod
     async def get_next_article(cursor):
         return await ArticleModel.filter().offset(cursor).limit(1).first()
 
@@ -90,4 +108,5 @@ class ArticleModel(Model):
         ticker_obj = await article.ticker.first()
         ticker_string = ticker_obj.ticker.lower() if ticker_obj else ""
         open_price, close_price = ticker_obj.open_price, ticker_obj.close_price
-        return ticker_string, open_price, close_price
+        market_date = ticker_obj.market_date
+        return ticker_string, open_price, close_price, market_date

@@ -42,9 +42,9 @@ class ArticleController:
         return "Created New Article", new_article, 201
 
     @staticmethod
-    async def fetch_articles(cursor, search_query, tickers_set, sentiment, price_action):
+    async def fetch_articles(cursor, search_query, tickers_set, sentiment, price_action, start_date, end_date):
         try:
-            article_models, cursor = await ArticleModel.get_paged_articles(cursor, search_query, tickers_set, sentiment, price_action)
+            article_models, cursor = await ArticleModel.get_paged_articles(cursor, search_query, tickers_set, sentiment, price_action, start_date, end_date)
             articles_list = await ArticleController.convert_articles_to_json(article_models)
             return "Successfully Queried Articles", articles_list, cursor, 200
 
