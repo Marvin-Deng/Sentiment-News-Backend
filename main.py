@@ -26,6 +26,7 @@ app.add_middleware(
 @app.on_event("startup")
 async def startup():
     await init_db()
+    await process_articles_job()
     schedule_background_tasks()
 
 

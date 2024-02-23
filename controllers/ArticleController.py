@@ -1,9 +1,11 @@
-from models.ArticleModel import ArticleModel, SentimentEnum
-from models.TickerModel import TickerModel
-from controllers.TickerController import TickerController
-from utils.article import ArticleUtils
 import logging
 import traceback
+
+from models.ArticleModel import ArticleModel, SentimentEnum
+from models.TickerModel import TickerModel
+from utils.date import DateUtils
+from controllers.TickerController import TickerController
+from utils.article import ArticleUtils
 
 logging.basicConfig(filename='error.log', level=logging.ERROR)
 
@@ -66,7 +68,7 @@ class ArticleController:
                 'article_url': article_obj.article_url,
                 'summary': article_obj.summary,
                 'ticker': ticker_obj.ticker,
-                'publication_datetime': ArticleUtils.convert_datetime_to_string(article_obj.publication_datetime),
+                'publication_datetime': DateUtils.convert_datetime_to_string(article_obj.publication_datetime),
                 'sentiment': article_obj.sentiment.value,
                 'market_date': ticker_obj.market_date,
                 'open_price': ticker_obj.open_price,

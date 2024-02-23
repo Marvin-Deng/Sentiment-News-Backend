@@ -1,9 +1,11 @@
 import finnhub
 import requests
-from datetime import datetime, timezone
+from datetime import datetime
 from dotenv import load_dotenv
 import os
 import re
+
+from .date import DateUtils
 
 load_dotenv()
 
@@ -24,7 +26,7 @@ class ArticleUtils:
     def get_article_info(article):
         id = article['id']
         title = article['headline']
-        publication_datetime = ArticleUtils.convert_unix_to_utc(
+        publication_datetime = DateUtils.convert_unix_to_utc(
             article['datetime'])
         parsed_datetime = datetime.fromisoformat(publication_datetime)
         image_url = article['image']
@@ -123,23 +125,6 @@ class ArticleUtils:
             return ArticleUtils.extract_sentiment(sentiment_json)
 
         return "neutral"
-
-    @staticmethod
-    def convert_unix_to_utc(unix):
-        utc_datetime = datetime.fromtimestamp(unix, tz=timezone.utc)
-        utc_without_offset = utc_datetime.replace(tzinfo=None)
-        return utc_without_offset.strftime("%Y-%m-%d %H:%M:%S")
-
-    @staticmethod
-    def convert_datetime_to_string(datetime_str):
-        input_datetime = datetime.strptime(datetime_str, "%Y-%m-%d %H:%M:%S")
-        day_without_leading_zero = str(input_datetime.day).lstrip('0')
-
-        if input_datetime.hour == 0 and input_datetime.minute == 0:
-            return input_datetime.strftime("%B {}, %Y".format(day_without_leading_zero))
-
-        else:
-            return input_datetime.strftime("%B {}, %Y at %H:%M UTC".format(day_without_leading_zero))
 
     @staticmethod
     def get_list_without_symbols(input_string):

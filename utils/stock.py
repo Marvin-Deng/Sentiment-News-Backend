@@ -123,5 +123,5 @@ class StockUtils:
             "T",
             "WMT",
         ]
-
+        
         return tickers
