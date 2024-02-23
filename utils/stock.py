@@ -64,14 +64,40 @@ class StockUtils:
         return next_monday
 
     @staticmethod
-    def get_open_close(ticker, date):
+    def get_stock_info(ticker, date):
         eod_data = StockUtils.get_eod_data(ticker, date)
-        open_price, close_price = None, None
+        stock_info = {
+            'open_price': None,
+            'high_price': None,
+            'low_price': None,
+            'close_price': None,
+            'volume': None,
+            'adj_open': None,
+            'adj_high': None,
+            'adj_low': None,
+            'adj_close': None,
+            'adj_volume': None,
+            'div_cash': None,
+            'split_factor': None
+        }
 
-        if eod_data is not None and len(eod_data) > 0:
-            open_price = eod_data[0]['open']
-            close_price = eod_data[0]['close']
-        return open_price, close_price
+        if eod_data and isinstance(eod_data, list) and len(eod_data) > 0 and isinstance(eod_data[0], dict):
+            stock_info.update({
+                'open_price': eod_data[0].get('open', 0), 
+                'high_price': eod_data[0].get('high', 0),
+                'low_price': eod_data[0].get('low', 0),
+                'close_price': eod_data[0].get('close', 0),
+                'volume': eod_data[0].get('volume', 0),
+                'adj_open': eod_data[0].get('adjOpen', 0),
+                'adj_high': eod_data[0].get('adjHigh', 0),
+                'adj_low': eod_data[0].get('adjLow', 0),
+                'adj_close': eod_data[0].get('adjClose', 0),
+                'adj_volume': eod_data[0].get('adjVolume', 0),
+                'div_cash': eod_data[0].get('divCash', 0),
+                'split_factor': eod_data[0].get('splitFactor', 0),
+            })
+
+        return stock_info
 
     @staticmethod
     def get_all_tickers():
@@ -97,5 +123,5 @@ class StockUtils:
             "T",
             "WMT",
         ]
-        
+
         return tickers

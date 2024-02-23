@@ -10,6 +10,7 @@ class TickerController:
 
     @staticmethod
     async def create_ticker(ticker, publication_datetime):
+        print("updating...")
         market_date = StockUtils.get_market_date(
             publication_datetime).strftime("%Y-%m-%d")
 
@@ -19,13 +20,11 @@ class TickerController:
             return "Ticker already exists", existing_ticker[0], 409
 
         try:
-            open_price, close_price = StockUtils.get_open_close(
-                ticker, market_date)
+            stock_info = StockUtils.get_stock_info(ticker, market_date)
             new_ticker = TickerModel(
                 ticker=ticker,
                 market_date=market_date,
-                open_price=open_price,
-                close_price=close_price
+                **stock_info
             )
             await new_ticker.save()
 
@@ -41,10 +40,14 @@ class TickerController:
         try:
             tickers = await TickerModel.filter(market_date=date_str)
             for ticker_model in tickers:
-                open_price, close_price = StockUtils.get_open_close(
-                    ticker_model.ticker, date_str)
-                ticker_model.open_price = open_price
-                ticker_model.close_price = close_price
+                stock_info = StockUtils.get_stock_info(ticker_model.ticker, date_str)
+                if stock_info.get("open_price") == None:
+                    continue
+                ticker_model.ticker = stock_info.get("ticker")
+                ticker_model.market_date = stock_info.get("market_date")
+                for key, value in stock_info.items():
+                    if hasattr(ticker_model, key):
+                        setattr(ticker_model, key, value)
                 await ticker_model.save()
 
             return "Updated tickers", tickers, 200

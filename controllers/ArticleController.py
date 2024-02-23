@@ -78,8 +78,4 @@ class ArticleController:
 
     @staticmethod
     async def remove_articles(one_week_ago_date):
-        tickers = await TickerModel.filter(market_date=one_week_ago_date)
-
-        for ticker in tickers:
-            await ArticleModel.filter(ticker=ticker).delete()
-            await ticker.delete()
+        await TickerModel.filter(market_date=one_week_ago_date).delete()
