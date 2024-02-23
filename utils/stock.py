@@ -39,13 +39,10 @@ class StockUtils:
         et_market_close = time(16, 0)
         et_day_end = time(23, 59)
 
-        utc_market_close = StockUtils.convert_ET_to_UTC(
-            article_datetime.date(), et_market_close)
-        utc_day_end = StockUtils.convert_ET_to_UTC(
-            article_datetime.date(), et_day_end)
-        utc_article_datetime = article_datetime.replace(tzinfo=pytz.utc)
+        utc_market_close = StockUtils.convert_ET_to_UTC(article_datetime.date(), et_market_close)
+        utc_day_end = StockUtils.convert_ET_to_UTC(article_datetime.date(), et_day_end)
 
-        if utc_market_close < utc_article_datetime and utc_article_datetime <= utc_day_end:
+        if utc_market_close < article_datetime and article_datetime <= utc_day_end:
             return True
 
         return False

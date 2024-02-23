@@ -15,8 +15,7 @@ class ArticleUtils:
     @staticmethod
     def get_articles(ticker, date_from, date_to):
         try:
-            finnhub_client = finnhub.Client(
-                api_key=os.getenv("FINNHUB_API_KEY"))
+            finnhub_client = finnhub.Client(api_key=os.getenv("FINNHUB_API_KEY"))
             return finnhub_client.company_news(ticker, _from=date_from, to=date_to)
 
         except Exception:
@@ -26,8 +25,7 @@ class ArticleUtils:
     def get_article_info(article):
         id = article['id']
         title = article['headline']
-        publication_datetime = DateUtils.convert_unix_to_utc(
-            article['datetime'])
+        publication_datetime = DateUtils.convert_unix_to_utc(article['datetime'])
         parsed_datetime = datetime.fromisoformat(publication_datetime)
         image_url = article['image']
         url = article['url']
