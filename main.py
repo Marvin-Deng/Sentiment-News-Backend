@@ -26,6 +26,7 @@ app.add_middleware(
 @app.on_event("startup")
 async def startup():
     await init_db()
+    await process_articles_job()
     schedule_background_tasks()
 
 
@@ -57,9 +58,9 @@ def get_tickers() -> List[str]:
 
 def schedule_background_tasks():
     scheduler = AsyncIOScheduler()
-    scheduler.add_job(process_articles_job, 'cron', hour=14, minute=0)
-    scheduler.add_job(update_tickers_job, 'cron', hour=14, minute=30)
-    scheduler.add_job(remove_articles_job, 'cron', hour=5, minute=0)
+    # scheduler.add_job(process_articles_job, 'cron', hour=14, minute=0)
+    # scheduler.add_job(update_tickers_job, 'cron', hour=14, minute=30)
+    # scheduler.add_job(remove_articles_job, 'cron', hour=5, minute=0)
     scheduler.start()
 
 

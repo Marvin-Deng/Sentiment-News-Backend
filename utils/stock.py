@@ -71,7 +71,6 @@ class StockUtils:
         if eod_data is not None and len(eod_data) > 0:
             open_price = eod_data[0]['open']
             close_price = eod_data[0]['close']
-
         return open_price, close_price
 
     @staticmethod
