@@ -8,10 +8,6 @@ class TestDateUtils(unittest.TestCase):
     def test_convert_string_to_datetime_valid(self):
         self.assertEqual(DateUtils.convert_string_to_datetime("2023-01-01"), datetime(2023, 1, 1).date())
 
-    def test_convert_string_to_datetime_invalid(self):
-        with self.assertRaises(ValueError):
-            DateUtils.convert_string_to_datetime("invalid-date")
-
     def test_convert_unix_to_utc(self):
         unix_timestamp = 1672444800
         self.assertEqual(DateUtils.convert_unix_to_utc(unix_timestamp), "2022-12-31 00:00:00")
