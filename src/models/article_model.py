@@ -33,7 +33,7 @@ class ArticleModel(Model):
             article = await cls.get_next_article(cursor)
 
             if not article:
-                return filtered_articles, 0
+                return filtered_articles, cursor
 
             # Extract ticker fields for the article
             ticker_string, open_price, close_price, market_date = await cls.get_ticker_fields(article)
