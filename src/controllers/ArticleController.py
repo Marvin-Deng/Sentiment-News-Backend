@@ -21,7 +21,6 @@ class ArticleController:
 
         try:
             article_data = ArticleUtils.get_article_info(article)
-
             _, ticker_object, _ = await TickerController.create_ticker(article_data['ticker'], article_data['publication_datetime'])
 
             new_article = ArticleModel(
@@ -61,7 +60,6 @@ class ArticleController:
         articles_json_list = []
         for article_obj in articles_list:
             ticker_obj = await article_obj.ticker.first()
-
             article = {
                 'title': article_obj.title,
                 'image_url': article_obj.image_url,
