@@ -16,7 +16,7 @@ class ArticleModel(Model):
     summary = TextField()
     publication_datetime = CharField(max_length=100)
     ticker = ForeignKeyField('models.TickerModel')
-    sentiment = CharField(max_length=20)
+    sentiment = CharField(max_length=50)
 
     class Meta:
         table = "article_model"

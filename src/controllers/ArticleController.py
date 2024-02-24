@@ -67,7 +67,7 @@ class ArticleController:
                 'summary': article_obj.summary,
                 'ticker': ticker_obj.ticker,
                 'publication_datetime': DateUtils.convert_datetime_to_string(article_obj.publication_datetime),
-                'sentiment': article_obj.sentiment.value,
+                'sentiment': article_obj.sentiment,
                 'market_date': ticker_obj.market_date,
                 'open_price': ticker_obj.open_price,
                 'close_price': ticker_obj.close_price
