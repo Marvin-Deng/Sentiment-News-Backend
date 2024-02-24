@@ -23,7 +23,7 @@ pip install -r requirements.txt
 
 3. Run locally using 
 ```shell
-`hypercorn main:app --reload`
+`hypercorn src/main:app --reload`
 ```
 
 4. Run tests
