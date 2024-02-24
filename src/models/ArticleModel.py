@@ -1,17 +1,10 @@
+import re
 from tortoise.models import Model
 from tortoise.fields import (
-    IntField, CharField, TextField, ForeignKeyField, CharEnumField
+    IntField, CharField, TextField, ForeignKeyField
 )
 
-from utils.article import ArticleUtils
 from utils.date import DateUtils
-from enum import Enum
-
-
-class SentimentEnum(str, Enum):
-    POSITIVE = 'Positive'
-    NEGATIVE = 'Negative'
-    NEUTRAL = 'Neutral'
 
 
 class ArticleModel(Model):
@@ -23,7 +16,7 @@ class ArticleModel(Model):
     summary = TextField()
     publication_datetime = CharField(max_length=100)
     ticker = ForeignKeyField('models.TickerModel')
-    sentiment = CharEnumField(SentimentEnum, max_length=10)
+    sentiment = CharField(max_length=20)
 
     class Meta:
         table = "article_model"
@@ -32,7 +25,7 @@ class ArticleModel(Model):
     async def get_paged_articles(cls, cursor, search_query, tickers_set, sentiment, price_action, start_date, end_date):
         PAGE_SIZE = 10
         filtered_articles = []
-        keywords_set = set(ArticleUtils.get_list_without_symbols(search_query))
+        keywords_set = set(cls.get_list_without_symbols(search_query))
 
         while len(filtered_articles) < PAGE_SIZE:
             cursor += 1
@@ -69,7 +62,7 @@ class ArticleModel(Model):
         if not keywords_set or ticker_string in keywords_set:
             return True
 
-        title_words = ArticleUtils.get_list_without_symbols(title)
+        title_words = ArticleModel.get_list_without_symbols(title)
         return any(word in keywords_set for word in title_words)
 
     @staticmethod
@@ -110,3 +103,9 @@ class ArticleModel(Model):
         open_price, close_price = ticker_obj.open_price, ticker_obj.close_price
         market_date = ticker_obj.market_date
         return ticker_string, open_price, close_price, market_date
+
+    @staticmethod
+    def get_list_without_symbols(input_string):
+        words = input_string.split()
+        processed_words = [re.sub(r'\W+', '', word.lower()) for word in words]
+        return processed_words

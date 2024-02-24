@@ -3,9 +3,9 @@ import requests
 from datetime import datetime
 from dotenv import load_dotenv
 import os
-import re
 
 from .date import DateUtils
+from gemini.gemini_model import gemini_analyze_sentiment
 
 load_dotenv()
 
@@ -20,31 +20,6 @@ class ArticleUtils:
 
         except Exception:
             return None
-
-    @staticmethod
-    def get_article_info(article):
-        id = article['id']
-        title = article['headline']
-        publication_datetime = DateUtils.convert_unix_to_utc(article['datetime'])
-        parsed_datetime = datetime.fromisoformat(publication_datetime)
-        image_url = article['image']
-        url = article['url']
-        summary = article['summary']
-        ticker = article['related']
-        sentiment = ArticleUtils.evaluate_sentiment(summary, title)
-
-        article_info = {
-            "id": id,
-            "title": title,
-            "publication_datetime": parsed_datetime,
-            "image_url": image_url,
-            "url": url,
-            "summary": summary,
-            "ticker": ticker,
-            "sentiment": sentiment
-        }
-
-        return article_info
 
     @staticmethod
     def extract_text(article_url):
@@ -92,40 +67,61 @@ class ArticleUtils:
             return None
 
     @staticmethod
-    def extract_sentiment(sentiment_json):
-        sentiment = "neutral"
+    def api_extract_sentiment(sentiment_json):
+        sentiment = "Neutral"
         try:
             predictions = sentiment_json[0].get('predictions')
-
             prediction = predictions[0].get('prediction')
             probability = predictions[0].get('probability')
 
             if probability is not None and probability < 0.6:
-                sentiment = "neutral"
-
+                sentiment = "Neutral"
             else:
                 sentiment = prediction
 
         except (KeyError, IndexError):
-            sentiment = "neutral"
+            sentiment = "Neutral"
 
         return sentiment
 
     @staticmethod
-    def evaluate_sentiment(summary, title):
+    def api_evaluate_sentiment(title, summary):
 
         summary_json = ArticleUtils.get_sentiment(summary)
         if (summary_json):
-            return ArticleUtils.extract_sentiment(summary_json)
+            return ArticleUtils.api_extract_sentiment(summary_json)
 
         sentiment_json = ArticleUtils.get_sentiment(title)
         if (sentiment_json):
-            return ArticleUtils.extract_sentiment(sentiment_json)
+            return ArticleUtils.api_extract_sentiment(sentiment_json)
 
-        return "neutral"
+        return "Neutral"
 
     @staticmethod
-    def get_list_without_symbols(input_string):
-        words = input_string.split()
-        processed_words = [re.sub(r'\W+', '', word.lower()) for word in words]
-        return processed_words
+    def evaluate_sentiment(title, summary):
+        return gemini_analyze_sentiment(f"{title}: {summary}") or ArticleUtils.api_evaluate_sentiment(title, summary)
+
+    @staticmethod
+    def get_article_info(article):
+        id = article['id']
+        title = article['headline']
+        publication_datetime = DateUtils.convert_unix_to_utc(article['datetime'])
+        parsed_datetime = datetime.fromisoformat(publication_datetime)
+        image_url = article['image']
+        url = article['url']
+        summary = article['summary']
+        ticker = article['related']
+        sentiment = ArticleUtils.evaluate_sentiment(title, summary)
+
+        article_info = {
+            "id": id,
+            "title": title,
+            "publication_datetime": parsed_datetime,
+            "image_url": image_url,
+            "url": url,
+            "summary": summary,
+            "ticker": ticker,
+            "sentiment": sentiment
+        }
+
+        return article_info

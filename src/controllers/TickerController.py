@@ -10,7 +10,6 @@ class TickerController:
 
     @staticmethod
     async def create_ticker(ticker, publication_datetime):
-        print("updating...")
         market_date = StockUtils.get_market_date(publication_datetime).strftime("%Y-%m-%d")
 
         existing_ticker = await TickerModel.filter(ticker=ticker, market_date=market_date)

@@ -1,7 +1,7 @@
 import logging
 import traceback
 
-from models.ArticleModel import ArticleModel, SentimentEnum
+from models.ArticleModel import ArticleModel
 from models.TickerModel import TickerModel
 from utils.date import DateUtils
 from controllers.TickerController import TickerController
@@ -32,7 +32,7 @@ class ArticleController:
                 summary=article_data['summary'],
                 ticker=ticker_object,
                 publication_datetime=article_data['publication_datetime'],
-                sentiment=SentimentEnum[article_data['sentiment'].upper()]
+                sentiment=article_data['sentiment']
             )
             await new_article.save()
 
