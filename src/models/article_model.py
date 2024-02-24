@@ -5,6 +5,7 @@ from tortoise.fields import (
 )
 
 from utils.date_utils import DateUtils
+from constants.sentiment import SENTIMENT_MAP
 
 
 class ArticleModel(Model):
@@ -32,7 +33,7 @@ class ArticleModel(Model):
             article = await cls.get_next_article(cursor)
 
             if not article:
-                return [], 0
+                return filtered_articles, 0
 
             # Extract ticker fields for the article
             ticker_string, open_price, close_price, market_date = await cls.get_ticker_fields(article)
@@ -71,7 +72,7 @@ class ArticleModel(Model):
 
     @staticmethod
     def is_match_sentiment(sentiment, article_sentiment):
-        return not sentiment or article_sentiment.lower() == sentiment.lower()
+        return not sentiment or len(sentiment) == 0 or article_sentiment in SENTIMENT_MAP.get(sentiment, [])
 
     @staticmethod
     def is_match_price_action(price_action, open_price, close_price):
