@@ -4,11 +4,11 @@ from fastapi import FastAPI, Query
 from typing import List
 import os
 
-from services.ArticleService import process_articles, remove_articles
-from services.TickerService import update_tickers
-from views.ArticleView import ArticleView
-from utils.stock import StockUtils
-from models.ResponseModel import ResponseModel
+from services.article_service import process_articles, remove_articles
+from services.ticker_service import update_tickers
+from views.article_view import ArticleView
+from utils.stock_utils import StockUtils
+from models.response_model import ResponseModel
 from db import init_db
 
 

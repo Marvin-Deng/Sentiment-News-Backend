@@ -1,4 +1,4 @@
-from controllers.TickerController import TickerController
+from controllers.ticker_controller import TickerController
 import datetime
 
 

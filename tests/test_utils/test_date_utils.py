@@ -1,6 +1,6 @@
 import unittest
 from datetime import datetime
-from src.utils.date import DateUtils
+from utils.date_utils import DateUtils
 
 
 class TestDateUtils(unittest.TestCase):

@@ -4,7 +4,7 @@ from tortoise.fields import (
     IntField, CharField, TextField, ForeignKeyField
 )
 
-from utils.date import DateUtils
+from utils.date_utils import DateUtils
 
 
 class ArticleModel(Model):

@@ -1,11 +1,11 @@
 import logging
 import traceback
 
-from models.ArticleModel import ArticleModel
-from models.TickerModel import TickerModel
-from utils.date import DateUtils
-from controllers.TickerController import TickerController
-from utils.article import ArticleUtils
+from models.article_model import ArticleModel
+from models.ticker_model import TickerModel
+from utils.date_utils import DateUtils
+from controllers.ticker_controller import TickerController
+from utils.article_utils import ArticleUtils
 
 logging.basicConfig(filename='error.log', level=logging.ERROR)
 

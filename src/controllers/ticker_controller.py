@@ -1,5 +1,5 @@
-from models.TickerModel import TickerModel
-from utils.stock import StockUtils
+from models.ticker_model import TickerModel
+from utils.stock_utils import StockUtils
 import logging
 import traceback
 

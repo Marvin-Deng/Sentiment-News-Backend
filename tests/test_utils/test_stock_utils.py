@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 from datetime import datetime
 import pytz
-from src.utils.stock import StockUtils
+from utils.stock_utils import StockUtils
 
 
 class TestStockUtils(unittest.TestCase):

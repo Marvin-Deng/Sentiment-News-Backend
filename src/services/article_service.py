@@ -1,6 +1,6 @@
-from utils.article import ArticleUtils
-from utils.stock import StockUtils
-from controllers.ArticleController import ArticleController
+from utils.article_utils import ArticleUtils
+from utils.stock_utils import StockUtils
+from controllers.article_controller import ArticleController
 import datetime
 
 

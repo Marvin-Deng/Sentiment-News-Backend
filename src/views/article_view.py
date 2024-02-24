@@ -1,5 +1,5 @@
-from controllers.ArticleController import ArticleController
-from models.ResponseModel import ResponseModel
+from controllers.article_controller import ArticleController
+from models.response_model import ResponseModel
 import datetime
 
 

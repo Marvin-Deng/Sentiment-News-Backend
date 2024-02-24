@@ -10,7 +10,7 @@ DB_CONFIG = {
     },
     "apps": {
         "models": {
-            "models": ["models.ArticleModel", "models.TickerModel"],
+            "models": ["models.article_model", "models.ticker_model"],
             "default_connection": "default",
         }
     }
