@@ -31,7 +31,7 @@ async def startup():
 
 @app.get('/api/articles', response_model=ResponseModel)
 async def get_articles(
-    cursor: int = Query(..., description="Page number", ge=0),
+    page: int = Query(..., description="Page number", ge=0),
     search_query: str = Query(..., description="Search query"),
     tickers: str = Query(..., description="String of tickers"),
     sentiment: str = Query(..., description="Sentiment"),
@@ -40,7 +40,7 @@ async def get_articles(
     end_date: str = Query(..., description="Ending date of the filter"),
 ):
     return await ArticleView.get_articles(
-        cursor=cursor,
+        page=page,
         search_query=search_query,
         tickers=tickers,
         sentiment=sentiment,

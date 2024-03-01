@@ -18,5 +18,4 @@ class Article(BaseModel):
 class ResponseModel(BaseModel):
     message: str
     articles: List[Article]
-    cursor: int
     code: int

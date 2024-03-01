@@ -6,22 +6,28 @@ import datetime
 class ArticleView:
 
     @staticmethod
-    async def get_articles(cursor, search_query, tickers, sentiment, price_action, start_date, end_date):
-
-        # Set default values for the params
-        cursor = cursor or 0
+    async def get_articles(page, search_query, tickers, sentiment, price_action, start_date, end_date):
         search_query = search_query or ""
         sentiment = sentiment or ""
         price_action = price_action or ""
+
         if len(start_date) == 0 and len(end_date) == 0:
             start_date = "1970-01-01"
             end_date = datetime.date.today().strftime("%Y-%m-%d")
 
-        # Convert ticker string to a set
-        tickers_set = set()
-        if tickers and any(tickers):
-            for ticker in tickers.split(','):
-                tickers_set.add(ticker.lower())
+        tickers_list = tickers.split(',')
+        if tickers_list == ['']:
+            tickers_list = []
 
-        message, response, cursor, status = await ArticleController.fetch_articles(cursor, search_query, tickers_set, sentiment, price_action, start_date, end_date)
-        return ResponseModel(message=message, articles=response, cursor=cursor, code=status)
+        search_params = {
+            'page': page,
+            'search_query': search_query,
+            'tickers_list': tickers_list,
+            'sentiment': sentiment,
+            'price_action': price_action,
+            'start_date': start_date,
+            'end_date': end_date
+        }
+
+        message, response, status = await ArticleController.fetch_articles(search_params)
+        return ResponseModel(message=message, articles=response, code=status)

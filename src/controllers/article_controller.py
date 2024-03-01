@@ -43,38 +43,16 @@ class ArticleController:
         return "Created New Article", new_article, 201
 
     @staticmethod
-    async def fetch_articles(cursor, search_query, tickers_set, sentiment, price_action, start_date, end_date):
+    async def fetch_articles(search_params):
         try:
-            article_models, cursor = await ArticleModel.get_paged_articles(cursor, search_query, tickers_set, sentiment, price_action, start_date, end_date)
-            articles_list = await ArticleController.convert_articles_to_json(article_models)
-            return "Successfully Queried Articles", articles_list, cursor, 200
+            response = await ArticleModel.get_paged_articles(search_params)
+            return "Successfully queried articles", response, 200
 
         except Exception as e:
             error_message = f"Internal Service Error: {e}"
             logging.error(error_message)
             logging.error(traceback.format_exc())
-            return error_message, [], 0, 500
-
-    @staticmethod
-    async def convert_articles_to_json(articles_list):
-        articles_json_list = []
-        for article_obj in articles_list:
-            ticker_obj = await article_obj.ticker.first()
-            article = {
-                'title': article_obj.title,
-                'image_url': article_obj.image_url,
-                'article_url': article_obj.article_url,
-                'summary': article_obj.summary,
-                'ticker': ticker_obj.ticker,
-                'publication_datetime': DateUtils.convert_datetime_to_string(article_obj.publication_datetime),
-                'sentiment': article_obj.sentiment,
-                'market_date': ticker_obj.market_date,
-                'open_price': ticker_obj.open_price,
-                'close_price': ticker_obj.close_price
-            }
-            articles_json_list.append(article)
-
-        return articles_json_list
+            return error_message, [], 500
 
     @staticmethod
     async def remove_articles(one_week_ago_date):
