@@ -10,9 +10,9 @@ load_dotenv()
 class StockUtils:
 
     @staticmethod
-    def get_eod_data(ticker, date_str):
+    def get_eod_data(ticker, start_date, end_date):
         try:
-            url = f"https://api.tiingo.com/tiingo/daily/{ticker}/prices?startDate={date_str}&endDate={date_str}&token={os.getenv('TIINGO_TOKEN')}"
+            url = f"https://api.tiingo.com/tiingo/daily/{ticker}/prices?startDate={start_date}&endDate={end_date}&token={os.getenv('TIINGO_TOKEN')}"
             headers = {
                 'Content-Type': 'application/json'
             }
@@ -42,7 +42,7 @@ class StockUtils:
 
     @staticmethod
     def get_stock_info(ticker, date):
-        eod_data = StockUtils.get_eod_data(ticker, date)
+        eod_data = StockUtils.get_eod_data(ticker, date, date)
         stock_info = {
             'open_price': None,
             'high_price': None,

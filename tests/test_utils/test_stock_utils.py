@@ -42,7 +42,7 @@ class TestStockUtils(unittest.TestCase):
         }]
         mock_get.return_value = mock_response
 
-        result = StockUtils.get_eod_data('AAPL', '2023-01-01')
+        result = StockUtils.get_eod_data('AAPL', '2023-01-01', '2023-01-01')
 
         self.assertIsNotNone(result)
         self.assertIsInstance(result, list)

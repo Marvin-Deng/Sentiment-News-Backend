@@ -17,9 +17,11 @@ class ArticleController:
         existing_article = await ArticleModel.filter(article_id=article['id'])
 
         if existing_article:
+            print("Duplicated")
             return "Duplicated Article", existing_article[0], 409
 
         try:
+            print("Creating new")
             article_data = ArticleUtils.get_article_info(article)
             _, ticker_object, _ = await TickerController.create_ticker(article_data['ticker'], article_data['publication_datetime'])
 

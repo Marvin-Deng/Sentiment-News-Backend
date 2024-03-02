@@ -50,14 +50,23 @@ async def get_articles(
     )
 
 
-@app.get('/api/tickers')
+@app.get('/api/stock/tinngo_stock_prices')
+def get_tinngo_stock(
+    ticker: str = Query(..., description="Ticker string"),
+    start_date: str = Query(..., description="Starting date"),
+    end_date: str = Query(..., description="Ending date"),
+):
+    return StockUtils.get_eod_data(ticker, start_date, end_date)
+    
+    
+@app.get('/api/stock/tickers')
 def get_tickers() -> List[str]:
     return StockUtils.get_all_tickers()
 
 
 def schedule_background_tasks():
     scheduler = AsyncIOScheduler()
-    scheduler.add_job(process_articles_job, 'cron', hour=14, minute=0)
+    scheduler.add_job(process_articles_job, 'cron', hour=18, minute=46)
     scheduler.add_job(update_tickers_job, 'cron', hour=14, minute=30)
     scheduler.add_job(remove_articles_job, 'cron', hour=5, minute=0)
     scheduler.start()
