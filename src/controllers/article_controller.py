@@ -53,7 +53,7 @@ class ArticleController:
                 await ArticleModel.filter(ticker=ticker).delete()
                 await ticker.delete()
             return "Successfully removed articles from last week"
-
+        
         except Exception as e:
             error_message = "Error occurred in article_controller.remove_articles"
             return LoggingUtils.log_error(e, error_message, None, 500)

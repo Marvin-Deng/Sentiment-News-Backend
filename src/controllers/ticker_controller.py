@@ -31,20 +31,19 @@ class TickerController:
     @staticmethod
     async def update_tickers(date_str):
         try:
-            print(date_str)
-            tickers = await TickerModel.filter(market_date=date_str)
+            tickers = await TickerModel.filter(market_date=date_str, open_price=None)
+            updated_tickers = []
             for ticker_model in tickers:
                 stock_info = StockUtils.get_stock_info(ticker_model.ticker, date_str)
                 if stock_info.get("open_price") == None:
                     continue
-                ticker_model.ticker = stock_info.get("ticker")
-                ticker_model.market_date = stock_info.get("market_date")
                 for key, value in stock_info.items():
                     if hasattr(ticker_model, key):
                         setattr(ticker_model, key, value)
                 await ticker_model.save()
+                updated_tickers.append(ticker_model.ticker)
 
-            return "Successfully updated tickers", tickers, 200
+            return "Successfully updated tickers", updated_tickers, 200
 
         except Exception as e:
             error_message = "Error occured in controllers.update_tickers"

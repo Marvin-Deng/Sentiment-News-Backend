@@ -9,7 +9,6 @@ from controllers.article_controller import ArticleController
 async def process_articles():
     try:
         date_today = datetime.date.today().strftime("%Y-%m-%d")
-
         tickers = StockUtils.get_all_tickers()
 
         for ticker in tickers:
@@ -18,6 +17,7 @@ async def process_articles():
                 if (article['image']):
                     await ArticleController.create_article(article)
         return "Successfully processed articles"
+    
     except Exception as e:
         error_message = "An error occurred in services.process_articles"
         return LoggingUtils.log_error(e, error_message, None, 500)
