@@ -36,9 +36,10 @@ class ArticleController:
             await new_article.save()
 
         except Exception as e:
-            logging.error(f"Exception: {e}")
+            error_message = f"Error occured in article_controller.create_article: {e}"
+            logging.error(error_message)
             logging.error(traceback.format_exc())
-            return "Internal Server Error Creating Articles", None, 500
+            return "error_message", None, 500
 
         return "Created New Article", new_article, 201
 
@@ -49,15 +50,19 @@ class ArticleController:
             return "Successfully queried articles", response, 200
 
         except Exception as e:
-            error_message = f"Internal Service Error: {e}"
+            error_message = f"Error occured in article_controller.fetch_articles: {e}"
             logging.error(error_message)
             logging.error(traceback.format_exc())
             return error_message, [], 500
 
     @staticmethod
     async def remove_articles(one_week_ago_date):
-        tickers = await TickerModel.filter(market_date=one_week_ago_date)
+        try:
+            tickers = await TickerModel.filter(market_date=one_week_ago_date)
 
-        for ticker in tickers:
-            await ArticleModel.filter(ticker=ticker).delete()
-            await ticker.delete()
+            for ticker in tickers:
+                await ArticleModel.filter(ticker=ticker).delete()
+                await ticker.delete()
+            return "Successfully removed articles from last week"
+        except Exception as e:
+            return f"An error occurred in remove_articles: {e}"

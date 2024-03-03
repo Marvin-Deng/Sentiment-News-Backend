@@ -50,17 +50,17 @@ async def get_articles(
 
 @app.get('/api/article/process')
 async def process_recent_articles():
-    await process_articles()
+    return await process_articles()
 
 
 @app.get('/api/article/remove')
 async def delete_old_articles():
-    await remove_articles()
+    return await remove_articles()
 
 
 @app.get('/api/stock/update')
 async def update_recent_tickers():
-    await update_tickers()
+    return await update_tickers()
 
 
 @app.get('/api/stock/tinngo_stock_prices')

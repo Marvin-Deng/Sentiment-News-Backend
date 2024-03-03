@@ -36,6 +36,7 @@ class TickerController:
     @staticmethod
     async def update_tickers(date_str):
         try:
+            print(date_str)
             tickers = await TickerModel.filter(market_date=date_str)
             for ticker_model in tickers:
                 stock_info = StockUtils.get_stock_info(ticker_model.ticker, date_str)
@@ -48,9 +49,9 @@ class TickerController:
                         setattr(ticker_model, key, value)
                 await ticker_model.save()
 
-            return "Updated tickers", tickers, 200
+            return "Successfully updated tickers", tickers, 200
 
         except Exception as e:
             logging.error(f"Exception: {e}")
             logging.error(traceback.format_exc())
-            return "Internal Server Error Updating Tickers", None, 500
+            return f"Error occured when updating tickers: {e}", None, 500
