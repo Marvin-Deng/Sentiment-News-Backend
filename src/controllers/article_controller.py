@@ -1,13 +1,8 @@
-import logging
-import traceback
-
 from models.article_model import ArticleModel
 from models.ticker_model import TickerModel
-from utils.date_utils import DateUtils
 from controllers.ticker_controller import TickerController
 from utils.article_utils import ArticleUtils
-
-logging.basicConfig(filename='error.log', level=logging.ERROR)
+from utils.logging_utils import LoggingUtils
 
 
 class ArticleController:
@@ -17,7 +12,7 @@ class ArticleController:
         existing_article = await ArticleModel.filter(article_id=article['id'])
 
         if existing_article:
-            return "Duplicated Article", existing_article[0], 409
+            return "Creation failed, article already exists", existing_article[0], 409
 
         try:
             article_data = ArticleUtils.get_article_info(article)
@@ -34,14 +29,11 @@ class ArticleController:
                 sentiment=article_data['sentiment']
             )
             await new_article.save()
+            return "Created new article", new_article, 201
 
         except Exception as e:
-            error_message = f"Error occured in article_controller.create_article: {e}"
-            logging.error(error_message)
-            logging.error(traceback.format_exc())
-            return "error_message", None, 500
-
-        return "Created New Article", new_article, 201
+            error_message = "Error occured in article_controller.create_article"
+            return LoggingUtils.log_error(e, error_message, None, 500)
 
     @staticmethod
     async def fetch_articles(search_params):
@@ -50,19 +42,18 @@ class ArticleController:
             return "Successfully queried articles", response, 200
 
         except Exception as e:
-            error_message = f"Error occured in article_controller.fetch_articles: {e}"
-            logging.error(error_message)
-            logging.error(traceback.format_exc())
-            return error_message, [], 500
+            error_message = "Error occured in article_controller.fetch_articles"
+            return LoggingUtils.log_error(e, error_message, [], 500)
 
     @staticmethod
     async def remove_articles(one_week_ago_date):
         try:
             tickers = await TickerModel.filter(market_date=one_week_ago_date)
-
             for ticker in tickers:
                 await ArticleModel.filter(ticker=ticker).delete()
                 await ticker.delete()
             return "Successfully removed articles from last week"
+
         except Exception as e:
-            return f"An error occurred in remove_articles: {e}"
+            error_message = "Error occurred in article_controller.remove_articles"
+            return LoggingUtils.log_error(e, error_message, None, 500)

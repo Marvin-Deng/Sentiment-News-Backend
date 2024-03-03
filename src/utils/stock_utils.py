@@ -1,6 +1,5 @@
 import requests
-import pytz
-from datetime import datetime, timedelta, time
+from datetime import timedelta, time
 from dotenv import load_dotenv
 import os
 

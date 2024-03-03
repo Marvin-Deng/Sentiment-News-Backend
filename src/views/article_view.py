@@ -1,6 +1,7 @@
+import datetime
+
 from controllers.article_controller import ArticleController
 from models.response_model import ResponseModel
-import datetime
 
 
 class ArticleView:

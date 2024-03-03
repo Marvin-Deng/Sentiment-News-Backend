@@ -1,7 +1,9 @@
+import datetime
+
 from utils.article_utils import ArticleUtils
 from utils.stock_utils import StockUtils
+from utils.logging_utils import LoggingUtils
 from controllers.article_controller import ArticleController
-import datetime
 
 
 async def process_articles():
@@ -17,7 +19,8 @@ async def process_articles():
                     await ArticleController.create_article(article)
         return "Successfully processed articles"
     except Exception as e:
-        return f"An error occurred in process_articles: {e}"
+        error_message = "An error occurred in services.process_articles"
+        return LoggingUtils.log_error(e, error_message, None, 500)
 
 
 async def remove_articles():
