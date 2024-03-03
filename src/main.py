@@ -1,4 +1,3 @@
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, Query
 from typing import List
@@ -26,7 +25,6 @@ app.add_middleware(
 @app.on_event("startup")
 async def startup():
     await init_db()
-    schedule_background_tasks()
 
 
 @app.get('/api/articles', response_model=ResponseModel)
@@ -50,6 +48,21 @@ async def get_articles(
     )
 
 
+@app.get('/api/article/process')
+async def process_recent_articles():
+    await process_articles()
+
+
+@app.get('/api/article/remove')
+async def delete_old_articles():
+    await remove_articles()
+
+
+@app.get('/api/stock/update')
+async def update_recent_tickers():
+    await update_tickers()
+
+
 @app.get('/api/stock/tinngo_stock_prices')
 def get_tinngo_stock(
     ticker: str = Query(..., description="Ticker string"),
@@ -57,28 +70,8 @@ def get_tinngo_stock(
     end_date: str = Query(..., description="Ending date"),
 ):
     return StockUtils.get_eod_data(ticker, start_date, end_date)
-    
-    
+
+
 @app.get('/api/stock/tickers')
 def get_tickers() -> List[str]:
     return StockUtils.get_all_tickers()
-
-
-def schedule_background_tasks():
-    scheduler = AsyncIOScheduler()
-    scheduler.add_job(process_articles_job, 'cron', hour=18, minute=46)
-    scheduler.add_job(update_tickers_job, 'cron', hour=14, minute=30)
-    scheduler.add_job(remove_articles_job, 'cron', hour=5, minute=0)
-    scheduler.start()
-
-
-async def process_articles_job():
-    await process_articles()
-
-
-async def update_tickers_job():
-    await update_tickers()
-
-
-async def remove_articles_job():
-    await remove_articles()

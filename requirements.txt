@@ -1,7 +1,6 @@
 aiosqlite==0.17.0
 annotated-types==0.6.0
 anyio==4.3.0
-APScheduler==3.10.4
 async-timeout==4.0.3
 asyncpg==0.29.0
 atlastk==0.13.3

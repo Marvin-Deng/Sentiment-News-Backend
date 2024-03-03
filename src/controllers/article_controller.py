@@ -17,11 +17,9 @@ class ArticleController:
         existing_article = await ArticleModel.filter(article_id=article['id'])
 
         if existing_article:
-            print("Duplicated")
             return "Duplicated Article", existing_article[0], 409
 
         try:
-            print("Creating new")
             article_data = ArticleUtils.get_article_info(article)
             _, ticker_object, _ = await TickerController.create_ticker(article_data['ticker'], article_data['publication_datetime'])
 
@@ -58,4 +56,8 @@ class ArticleController:
 
     @staticmethod
     async def remove_articles(one_week_ago_date):
-        await TickerModel.filter(market_date=one_week_ago_date).delete()
+        tickers = await TickerModel.filter(market_date=one_week_ago_date)
+
+        for ticker in tickers:
+            await ArticleModel.filter(ticker=ticker).delete()
+            await ticker.delete()
