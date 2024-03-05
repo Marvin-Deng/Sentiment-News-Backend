@@ -70,6 +70,7 @@ class ArticleModel(Model):
                             (ticker_model.open_price IS NULL OR ticker_model.close_price IS NULL) AND $4 = 'NA'
                         )
                     )
+                ORDER BY publication_datetime DESC
                 OFFSET $5
                 LIMIT $6;
             """
