@@ -99,7 +99,8 @@ class ArticleUtils:
 
     @staticmethod
     def evaluate_sentiment(title, summary):
-        return gemini_analyze_sentiment(f"{title}: {summary}") or ArticleUtils.api_evaluate_sentiment(title, summary)
+        sentiment = gemini_analyze_sentiment(f"{title}: {summary}") or ArticleUtils.api_evaluate_sentiment(title, summary)
+        return sentiment.title()
 
     @staticmethod
     def get_article_info(article):
