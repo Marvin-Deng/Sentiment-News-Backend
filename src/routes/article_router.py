@@ -1,6 +1,8 @@
 from fastapi import APIRouter, Query
 from models.response_model import ResponseModel
 from views.article_view import ArticleView
+from fastapi.responses import JSONResponse
+from constants.sentiment import SENTIMENT
 from services.article_service import process_articles, remove_articles
 
 router = APIRouter()
@@ -29,3 +31,8 @@ async def process_recent_articles():
 @router.get("/remove")
 async def delete_old_articles():
     return await remove_articles()
+
+
+@router.get("/sentiments")
+def get_sentiments():
+    return JSONResponse(content=SENTIMENT)
