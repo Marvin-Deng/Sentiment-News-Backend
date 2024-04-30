@@ -8,7 +8,7 @@ from services.article_service import process_articles, remove_articles
 router = APIRouter()
 
 
-@router.get("/", response_model=ResponseModel)
+@router.get("/news", response_model=ResponseModel)
 async def get_articles(
     page: int = Query(..., description="Page number", ge=0),
     search_query: str = Query(..., description="Search query"),
