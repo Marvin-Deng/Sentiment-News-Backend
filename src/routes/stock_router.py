@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Query
+
+from constants.stock import TICKERS
 from utils.stock_utils import StockUtils
 from services.ticker_service import update_tickers
-from typing import List
 
 router = APIRouter()
 
@@ -21,5 +22,5 @@ def get_tinngo_stock(
 
 
 @router.get("/tickers")
-def get_tickers() -> List[str]:
-    return StockUtils.get_all_tickers()
+def get_tickers():
+    return TICKERS

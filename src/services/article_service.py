@@ -1,23 +1,22 @@
 import datetime
 
 from utils.article_utils import ArticleUtils
-from utils.stock_utils import StockUtils
 from utils.logging_utils import LoggingUtils
 from controllers.article_controller import ArticleController
+from constants.stock import TICKERS
 
 
 async def process_articles():
     try:
         date_today = datetime.date.today().strftime("%Y-%m-%d")
-        tickers = StockUtils.get_all_tickers()
 
-        for ticker in tickers:
+        for ticker in TICKERS:
             articles = ArticleUtils.get_articles(ticker, date_today, date_today)
             for article in articles:
-                if (article['image']):
+                if article["image"]:
                     await ArticleController.create_article(article)
         return "Successfully processed articles"
-    
+
     except Exception as e:
         error_message = "An error occurred in services.process_articles"
         return LoggingUtils.log_error(e, error_message, None, 500)

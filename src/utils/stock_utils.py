@@ -74,30 +74,3 @@ class StockUtils:
             })
 
         return stock_info
-
-    @staticmethod
-    def get_all_tickers():
-        tickers = [
-            "AAPL",
-            "MSFT",
-            "AMZN",
-            "GOOGL",
-            "TSLA",
-            "JPM",
-            "V",
-            "FB",
-            "NVDA",
-            "NFLX",
-            "DIS",
-            "PYPL",
-            "BA",
-            "JNJ",
-            "KO",
-            "PFE",
-            "AMD",
-            "XOM",
-            "T",
-            "WMT",
-        ]
-
-        return tickers
