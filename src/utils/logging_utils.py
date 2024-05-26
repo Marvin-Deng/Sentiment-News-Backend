@@ -1,7 +1,8 @@
 import logging
 import traceback
 
-logging.basicConfig(filename='error.log', level=logging.ERROR)
+logging.basicConfig(filename="error.log", level=logging.ERROR)
+
 
 class LoggingUtils:
 

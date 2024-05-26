@@ -7,7 +7,7 @@ from constants.sentiment import SENTIMENT_OPTIONS
 load_dotenv()
 
 genai.configure(api_key=os.getenv("GEMINI_KEY"))
-model = genai.GenerativeModel('gemini-pro')
+model = genai.GenerativeModel("gemini-pro")
 
 
 def gemini_analyze_sentiment(text):

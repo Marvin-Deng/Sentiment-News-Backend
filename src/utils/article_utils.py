@@ -30,13 +30,12 @@ class ArticleUtils:
 
             headers = {
                 "X-RapidAPI-Key": os.getenv("RAPID_API_KEY"),
-                "X-RapidAPI-Host": "text-extract7.p.rapidapi.com"
+                "X-RapidAPI-Host": "text-extract7.p.rapidapi.com",
             }
 
-            response = requests.get(
-                base_url, headers=headers, params=querystring)
+            response = requests.get(base_url, headers=headers, params=querystring)
             json_data = response.json()
-            return json_data.get('raw_text')
+            return json_data.get("raw_text")
 
         except Exception:
             return None
@@ -46,18 +45,12 @@ class ArticleUtils:
         try:
             url = "https://sentiment-analysis9.p.rapidapi.com/sentiment"
 
-            payload = [
-                {
-                    "id": "1",
-                    "language": "en",
-                    "text": text
-                }
-            ]
+            payload = [{"id": "1", "language": "en", "text": text}]
             headers = {
                 "content-type": "application/json",
                 "Accept": "application/json",
                 "X-RapidAPI-Key": os.getenv("RAPID_API_KEY"),
-                "X-RapidAPI-Host": "sentiment-analysis9.p.rapidapi.com"
+                "X-RapidAPI-Host": "sentiment-analysis9.p.rapidapi.com",
             }
 
             response = requests.post(url, json=payload, headers=headers)
@@ -70,9 +63,9 @@ class ArticleUtils:
     def api_extract_sentiment(sentiment_json):
         sentiment = "Neutral"
         try:
-            predictions = sentiment_json[0].get('predictions')
-            prediction = predictions[0].get('prediction')
-            probability = predictions[0].get('probability')
+            predictions = sentiment_json[0].get("predictions")
+            prediction = predictions[0].get("prediction")
+            probability = predictions[0].get("probability")
 
             if probability is not None and probability < 0.6:
                 sentiment = "Neutral"
@@ -88,30 +81,32 @@ class ArticleUtils:
     def api_evaluate_sentiment(title, summary):
 
         summary_json = ArticleUtils.get_sentiment(summary)
-        if (summary_json):
+        if summary_json:
             return ArticleUtils.api_extract_sentiment(summary_json)
 
         sentiment_json = ArticleUtils.get_sentiment(title)
-        if (sentiment_json):
+        if sentiment_json:
             return ArticleUtils.api_extract_sentiment(sentiment_json)
 
         return "Neutral"
 
     @staticmethod
     def evaluate_sentiment(title, summary):
-        sentiment = gemini_analyze_sentiment(f"{title}: {summary}") or ArticleUtils.api_evaluate_sentiment(title, summary)
+        sentiment = gemini_analyze_sentiment(
+            f"{title}: {summary}"
+        ) or ArticleUtils.api_evaluate_sentiment(title, summary)
         return sentiment.title()
 
     @staticmethod
     def get_article_info(article):
-        id = article['id']
-        title = article['headline']
-        publication_datetime = DateUtils.convert_unix_to_utc(article['datetime'])
+        id = article["id"]
+        title = article["headline"]
+        publication_datetime = DateUtils.convert_unix_to_utc(article["datetime"])
         parsed_datetime = datetime.fromisoformat(publication_datetime)
-        image_url = article['image']
-        url = article['url']
-        summary = article['summary']
-        ticker = article['related']
+        image_url = article["image"]
+        url = article["url"]
+        summary = article["summary"]
+        ticker = article["related"]
         sentiment = ArticleUtils.evaluate_sentiment(title, summary)
 
         article_info = {
@@ -122,7 +117,7 @@ class ArticleUtils:
             "url": url,
             "summary": summary,
             "ticker": ticker,
-            "sentiment": sentiment
+            "sentiment": sentiment,
         }
 
         return article_info

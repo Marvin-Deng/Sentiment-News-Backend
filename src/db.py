@@ -6,14 +6,14 @@ load_dotenv()
 
 DB_CONFIG = {
     "connections": {
-        "default": os.getenv('DATABASE_URL'),
+        "default": os.getenv("DATABASE_URL"),
     },
     "apps": {
         "models": {
             "models": ["models.article_model", "models.ticker_model"],
             "default_connection": "default",
         }
-    }
+    },
 }
 
 

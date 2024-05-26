@@ -7,9 +7,12 @@ class TickerController:
 
     @staticmethod
     async def create_ticker(ticker, publication_datetime):
-        market_date = StockUtils.get_market_date(
-            publication_datetime).strftime("%Y-%m-%d")
-        existing_ticker = await TickerModel.filter(ticker=ticker, market_date=market_date)
+        market_date = StockUtils.get_market_date(publication_datetime).strftime(
+            "%Y-%m-%d"
+        )
+        existing_ticker = await TickerModel.filter(
+            ticker=ticker, market_date=market_date
+        )
 
         if existing_ticker:
             return "Ticker already exists", existing_ticker[0], 409
@@ -17,9 +20,7 @@ class TickerController:
         try:
             stock_info = StockUtils.get_stock_info(ticker, market_date)
             new_ticker = TickerModel(
-                ticker=ticker,
-                market_date=market_date,
-                **stock_info
+                ticker=ticker, market_date=market_date, **stock_info
             )
             await new_ticker.save()
             return "Created new ticker", new_ticker, 201
@@ -27,7 +28,7 @@ class TickerController:
         except Exception as e:
             error_message = "Error occured in controllers.ticker_controller"
             return LoggingUtils.log_error(e, error_message, None, 500)
-            
+
     @staticmethod
     async def update_tickers(date_str):
         try:

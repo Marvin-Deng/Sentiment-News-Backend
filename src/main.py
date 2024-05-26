@@ -1,8 +1,9 @@
+import os
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routes.article_router import router as article_router
 from routes.stock_router import router as stock_router
-import os
 from db import init_db
 
 app = FastAPI()

@@ -1,10 +1,8 @@
 import re
+
 from tortoise.models import Model
 from tortoise.transactions import in_transaction
-from tortoise.fields import (
-    IntField, CharField, TextField, ForeignKeyField
-)
-
+from tortoise.fields import IntField, CharField, TextField, ForeignKeyField
 from constants.sentiment import SENTIMENT_MAP
 
 
@@ -16,7 +14,7 @@ class ArticleModel(Model):
     article_url = TextField()
     summary = TextField()
     publication_datetime = CharField(max_length=100)
-    ticker = ForeignKeyField('models.TickerModel')
+    ticker = ForeignKeyField("models.TickerModel")
     sentiment = CharField(max_length=50)
 
     class Meta:
@@ -27,11 +25,20 @@ class ArticleModel(Model):
         PAGE_SIZE = 10
         keywords_list = cls.get_list_without_symbols(search_params["search_query"])
         sentiment_array = SENTIMENT_MAP.get(search_params["sentiment"], [])
-        offset = search_params['page'] * PAGE_SIZE
-        return await cls.get_articles(keywords_list, search_params["tickers_list"], sentiment_array, search_params["price_action"], offset, PAGE_SIZE)
+        offset = search_params["page"] * PAGE_SIZE
+        return await cls.get_articles(
+            keywords_list,
+            search_params["tickers_list"],
+            sentiment_array,
+            search_params["price_action"],
+            offset,
+            PAGE_SIZE,
+        )
 
     @staticmethod
-    async def get_articles(keywords, tickers_list, sentiment_array, price_action, offset, page_size):
+    async def get_articles(
+        keywords, tickers_list, sentiment_array, price_action, offset, page_size
+    ):
         async with in_transaction() as connection:
             query = """
                 SELECT 
@@ -74,11 +81,18 @@ class ArticleModel(Model):
                 OFFSET $5
                 LIMIT $6;
             """
-            params = (keywords, tickers_list, sentiment_array, price_action, offset, page_size)
+            params = (
+                keywords,
+                tickers_list,
+                sentiment_array,
+                price_action,
+                offset,
+                page_size,
+            )
             return await connection.execute_query_dict(query, params)
 
     @staticmethod
     def get_list_without_symbols(input_string):
         words = input_string.split()
-        processed_words = [re.sub(r'\W+', '', word.lower()) for word in words]
+        processed_words = [re.sub(r"\W+", "", word.lower()) for word in words]
         return processed_words

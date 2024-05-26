@@ -1,7 +1,5 @@
 from tortoise.models import Model
-from tortoise.fields import (
-    IntField, CharField, FloatField
-)
+from tortoise.fields import IntField, CharField, FloatField
 
 
 class TickerModel(Model):
