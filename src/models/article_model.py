@@ -1,8 +1,8 @@
 import re
-
 from tortoise.models import Model
 from tortoise.transactions import in_transaction
 from tortoise.fields import IntField, CharField, TextField, ForeignKeyField
+
 from constants.sentiment import SENTIMENT_MAP
 
 
@@ -27,17 +27,24 @@ class ArticleModel(Model):
         sentiment_array = SENTIMENT_MAP.get(search_params["sentiment"], [])
         offset = search_params["page"] * PAGE_SIZE
         return await cls.get_articles(
-            keywords_list,
-            search_params["tickers_list"],
-            sentiment_array,
-            search_params["price_action"],
-            offset,
-            PAGE_SIZE,
+            keywords=keywords_list,
+            ticker_list=search_params["ticker_list"],
+            sentiment_array=sentiment_array,
+            price_action=search_params["price_action"],
+            end_date=search_params["end_date"],
+            offset=offset,
+            page_size=PAGE_SIZE,
         )
 
     @staticmethod
     async def get_articles(
-        keywords, tickers_list, sentiment_array, price_action, offset, page_size
+        keywords,
+        ticker_list,
+        sentiment_array,
+        price_action,
+        end_date,
+        offset,
+        page_size,
     ):
         async with in_transaction() as connection:
             query = """
@@ -77,15 +84,18 @@ class ArticleModel(Model):
                             (ticker_model.open_price IS NULL OR ticker_model.close_price IS NULL) AND $4 = 'NA'
                         )
                     )
+                    AND
+                    ($5 = '' OR article_model.publication_datetime <= $5)
                 ORDER BY publication_datetime DESC
-                OFFSET $5
-                LIMIT $6;
+                OFFSET $6
+                LIMIT $7;
             """
             params = (
                 keywords,
-                tickers_list,
+                ticker_list,
                 sentiment_array,
                 price_action,
+                end_date,
                 offset,
                 page_size,
             )

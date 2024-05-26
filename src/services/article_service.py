@@ -23,6 +23,6 @@ async def process_articles():
 
 
 async def remove_articles():
-    one_week_ago = datetime.date.today() - datetime.timedelta(days=6)
+    one_week_ago = datetime.date.today() - datetime.timedelta(days=8)
     one_week_ago_date = one_week_ago.strftime("%Y-%m-%d")
     return await ArticleController.remove_articles(one_week_ago_date)

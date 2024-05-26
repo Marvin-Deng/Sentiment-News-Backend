@@ -16,11 +16,15 @@ async def get_articles(
     tickers: str = Query(..., description="String of tickers"),
     sentiment: str = Query(..., description="Sentiment"),
     price_action: str = Query(..., description="Price action"),
-    start_date: str = Query(..., description="Starting date of the filter"),
     end_date: str = Query(..., description="Ending date of the filter"),
 ):
     return await ArticleView.get_articles(
-        page, search_query, tickers, sentiment, price_action, start_date, end_date
+        page=page,
+        search_query=search_query,
+        tickers=tickers,
+        sentiment=sentiment,
+        price_action=price_action,
+        end_date=end_date,
     )
 
 

@@ -8,30 +8,19 @@ class ArticleView:
 
     @staticmethod
     async def get_articles(
-        page, search_query, tickers, sentiment, price_action, start_date, end_date
+        page, search_query, tickers, sentiment, price_action, end_date
     ):
-        search_query = search_query or ""
-        sentiment = sentiment or ""
-        price_action = price_action or ""
-
-        if len(start_date) == 0 and len(end_date) == 0:
-            start_date = "1970-01-01"
+        ticker_list = tickers.split(",") if len(tickers) != 0 else []
+        if len(end_date) == 0:
             end_date = datetime.date.today().strftime("%Y-%m-%d")
-
-        tickers_list = tickers.split(",")
-        if tickers_list == [""]:
-            tickers_list = []
-
         search_params = {
             "page": page,
             "search_query": search_query,
-            "tickers_list": tickers_list,
+            "ticker_list": ticker_list,
             "sentiment": sentiment,
             "price_action": price_action,
-            "start_date": start_date,
             "end_date": end_date,
         }
-
         message, response, status = await ArticleController.fetch_articles(
             search_params
         )
