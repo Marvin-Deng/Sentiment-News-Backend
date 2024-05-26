@@ -1,13 +1,10 @@
 import finnhub
 import requests
 from datetime import datetime
-from dotenv import load_dotenv
-import os
 
 from .date_utils import DateUtils
 from gemini.gemini_model import gemini_analyze_sentiment
-
-load_dotenv()
+from constants.env_consts import FINNHUB_API_KEY, RAPID_API_KEY
 
 
 class ArticleUtils:
@@ -15,7 +12,7 @@ class ArticleUtils:
     @staticmethod
     def get_articles(ticker, date_from, date_to):
         try:
-            finnhub_client = finnhub.Client(api_key=os.getenv("FINNHUB_API_KEY"))
+            finnhub_client = finnhub.Client(api_key=FINNHUB_API_KEY)
             return finnhub_client.company_news(ticker, _from=date_from, to=date_to)
 
         except Exception:
@@ -29,7 +26,7 @@ class ArticleUtils:
             querystring = {"url": article_url}
 
             headers = {
-                "X-RapidAPI-Key": os.getenv("RAPID_API_KEY"),
+                "X-RapidAPI-Key": RAPID_API_KEY,
                 "X-RapidAPI-Host": "text-extract7.p.rapidapi.com",
             }
 
@@ -49,7 +46,7 @@ class ArticleUtils:
             headers = {
                 "content-type": "application/json",
                 "Accept": "application/json",
-                "X-RapidAPI-Key": os.getenv("RAPID_API_KEY"),
+                "X-RapidAPI-Key": RAPID_API_KEY,
                 "X-RapidAPI-Host": "sentiment-analysis9.p.rapidapi.com",
             }
 

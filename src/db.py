@@ -1,12 +1,10 @@
-from dotenv import load_dotenv
-import os
 from tortoise import Tortoise
 
-load_dotenv()
+from constants.env_consts import DATABASE_URL
 
 DB_CONFIG = {
     "connections": {
-        "default": os.getenv("DATABASE_URL"),
+        "default": DATABASE_URL,
     },
     "apps": {
         "models": {

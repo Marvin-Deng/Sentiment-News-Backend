@@ -1,9 +1,7 @@
 import requests
 from datetime import timedelta, time
-from dotenv import load_dotenv
-import os
 
-load_dotenv()
+from constants.env_consts import TINNGO_API_KEY
 
 
 class StockUtils:
@@ -11,7 +9,7 @@ class StockUtils:
     @staticmethod
     def get_eod_data(ticker, start_date, end_date):
         try:
-            url = f"https://api.tiingo.com/tiingo/daily/{ticker}/prices?startDate={start_date}&endDate={end_date}&token={os.getenv('TIINGO_TOKEN')}"
+            url = f"https://api.tiingo.com/tiingo/daily/{ticker}/prices?startDate={start_date}&endDate={end_date}&token={TINNGO_API_KEY}"
             headers = {"Content-Type": "application/json"}
             response = requests.get(url, headers=headers)
             return response.json()
