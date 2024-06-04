@@ -19,25 +19,6 @@ class ArticleUtils:
             return None
 
     @staticmethod
-    def extract_text(article_url):
-        try:
-            base_url = "https://text-extract7.p.rapidapi.com/"
-
-            querystring = {"url": article_url}
-
-            headers = {
-                "X-RapidAPI-Key": RAPID_API_KEY,
-                "X-RapidAPI-Host": "text-extract7.p.rapidapi.com",
-            }
-
-            response = requests.get(base_url, headers=headers, params=querystring)
-            json_data = response.json()
-            return json_data.get("raw_text")
-
-        except Exception:
-            return None
-
-    @staticmethod
     def get_sentiment(text):
         try:
             url = "https://sentiment-analysis9.p.rapidapi.com/sentiment"
