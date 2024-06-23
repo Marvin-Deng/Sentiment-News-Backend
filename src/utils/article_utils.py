@@ -1,44 +1,13 @@
-import finnhub
-import requests
 from datetime import datetime
 
 from .date_utils import DateUtils
 from gemini.gemini_model import gemini_analyze_sentiment
-from constants.env_consts import FINNHUB_KEY_1, RAPID_API_KEY
-
+from services.article_services import get_sentiment
 
 class ArticleUtils:
 
     @staticmethod
-    def get_articles(ticker, date_from, date_to):
-        try:
-            finnhub_client = finnhub.Client(api_key=FINNHUB_KEY_1)
-            return finnhub_client.company_news(ticker, _from=date_from, to=date_to)
-
-        except Exception:
-            return None
-
-    @staticmethod
-    def get_sentiment(text):
-        try:
-            url = "https://sentiment-analysis9.p.rapidapi.com/sentiment"
-
-            payload = [{"id": "1", "language": "en", "text": text}]
-            headers = {
-                "content-type": "application/json",
-                "Accept": "application/json",
-                "X-RapidAPI-Key": RAPID_API_KEY,
-                "X-RapidAPI-Host": "sentiment-analysis9.p.rapidapi.com",
-            }
-
-            response = requests.post(url, json=payload, headers=headers)
-            return response.json()
-
-        except Exception:
-            return None
-
-    @staticmethod
-    def api_extract_sentiment(sentiment_json):
+    def _api_extract_sentiment(sentiment_json):
         sentiment = "Neutral"
         try:
             predictions = sentiment_json[0].get("predictions")
@@ -56,23 +25,23 @@ class ArticleUtils:
         return sentiment
 
     @staticmethod
-    def api_evaluate_sentiment(title, summary):
+    def _api_evaluate_sentiment(title, summary):
 
-        summary_json = ArticleUtils.get_sentiment(summary)
+        summary_json = get_sentiment(summary)
         if summary_json:
-            return ArticleUtils.api_extract_sentiment(summary_json)
+            return ArticleUtils._api_extract_sentiment(summary_json)
 
-        sentiment_json = ArticleUtils.get_sentiment(title)
+        sentiment_json = get_sentiment(title)
         if sentiment_json:
-            return ArticleUtils.api_extract_sentiment(sentiment_json)
+            return ArticleUtils._api_extract_sentiment(sentiment_json)
 
         return "Neutral"
 
     @staticmethod
-    def evaluate_sentiment(title, summary):
+    def _evaluate_sentiment(title, summary):
         sentiment = gemini_analyze_sentiment(
             f"{title}: {summary}"
-        ) or ArticleUtils.api_evaluate_sentiment(title, summary)
+        ) or ArticleUtils._api_evaluate_sentiment(title, summary)
         return sentiment.title()
 
     @staticmethod
@@ -85,7 +54,7 @@ class ArticleUtils:
         url = article["url"]
         summary = article["summary"]
         ticker = article["related"]
-        sentiment = ArticleUtils.evaluate_sentiment(title, summary)
+        sentiment = ArticleUtils._evaluate_sentiment(title, summary)
 
         article_info = {
             "id": id,

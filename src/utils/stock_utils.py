@@ -1,23 +1,9 @@
-import requests
 from datetime import timedelta, time
 
-from constants.env_consts import FINNHUB_KEY_2, TINNGO_API_KEY
-from fastapi import HTTPException
-from fastapi.responses import JSONResponse
+from services.stock_services import get_eod_data
 
 
 class StockUtils:
-
-    @staticmethod
-    def get_eod_data(ticker, start_date, end_date):
-        try:
-            url = f"https://api.tiingo.com/tiingo/daily/{ticker}/prices?startDate={start_date}&endDate={end_date}&token={TINNGO_API_KEY}"
-            headers = {"Content-Type": "application/json"}
-            response = requests.get(url, headers=headers)
-            return response.json()
-
-        except Exception:
-            return None
 
     @staticmethod
     def get_market_date(article_datetime):
@@ -33,20 +19,6 @@ class StockUtils:
         return published_date
 
     @staticmethod
-    async def get_stocks():
-        try:
-            url = f"https://finnhub.io/api/v1/stock/symbol?exchange=US&token={FINNHUB_KEY_2}"
-            response = requests.get(url)
-            stocks = response.json()
-            common_stocks = sorted(
-                [stock for stock in stocks if stock["type"] == "Common Stock"],
-                key=lambda x: x["symbol"],
-            )
-            return JSONResponse(content={"stocks": common_stocks}, status_code=200)
-        except requests.exceptions.RequestException as e:
-            raise HTTPException(status_code=500, detail=str(e))
-
-    @staticmethod
     def after_market_closed(article_datetime):
         return article_datetime.time() >= time(21, 0)
 
@@ -56,7 +28,7 @@ class StockUtils:
 
     @staticmethod
     def get_stock_info(ticker, date):
-        eod_data = StockUtils.get_eod_data(ticker, date, date)
+        eod_data = get_eod_data(ticker, date, date)
         stock_info = {
             "open_price": None,
             "high_price": None,
