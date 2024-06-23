@@ -27,6 +27,10 @@ async def get_articles(
         end_date=end_date,
     )
 
+@router.get("/sentiments")
+def get_sentiments():
+    return JSONResponse(content=SENTIMENT)
+
 
 @router.get("/process")
 async def process_recent_articles():
@@ -36,8 +40,3 @@ async def process_recent_articles():
 @router.get("/remove")
 async def delete_old_articles():
     return await remove_articles()
-
-
-@router.get("/sentiments")
-def get_sentiments():
-    return JSONResponse(content=SENTIMENT)

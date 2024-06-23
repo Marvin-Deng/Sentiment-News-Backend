@@ -4,7 +4,7 @@ from datetime import datetime
 
 from .date_utils import DateUtils
 from gemini.gemini_model import gemini_analyze_sentiment
-from constants.env_consts import FINNHUB_API_KEY, RAPID_API_KEY
+from constants.env_consts import FINNHUB_KEY_1, RAPID_API_KEY
 
 
 class ArticleUtils:
@@ -12,7 +12,7 @@ class ArticleUtils:
     @staticmethod
     def get_articles(ticker, date_from, date_to):
         try:
-            finnhub_client = finnhub.Client(api_key=FINNHUB_API_KEY)
+            finnhub_client = finnhub.Client(api_key=FINNHUB_KEY_1)
             return finnhub_client.company_news(ticker, _from=date_from, to=date_to)
 
         except Exception:

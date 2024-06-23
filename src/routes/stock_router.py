@@ -20,6 +20,9 @@ def get_tinngo_stock(
 ):
     return StockUtils.get_eod_data(ticker, start_date, end_date)
 
+@router.get("/exchange")
+async def get_exchange():
+    return await StockUtils.get_stocks()
 
 @router.get("/tickers")
 def get_tickers():
