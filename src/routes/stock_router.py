@@ -2,7 +2,7 @@ from fastapi import APIRouter, Query
 
 from constants.stock import TICKERS
 from utils.stock_utils import StockUtils
-from services.ticker_service import update_tickers
+from views.ticker_service import update_tickers
 
 router = APIRouter()
 

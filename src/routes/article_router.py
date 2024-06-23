@@ -2,8 +2,7 @@ from fastapi import APIRouter, Query
 from fastapi.responses import JSONResponse
 
 from models.response_model import ResponseModel
-from views.article_view import ArticleView
-from services.article_service import process_articles, remove_articles
+from views.article_view import get_articles, process_articles, remove_articles
 from constants.sentiment import SENTIMENT
 
 router = APIRouter()
@@ -18,7 +17,7 @@ async def get_articles(
     price_action: str = Query(..., description="Price action"),
     end_date: str = Query(..., description="Ending date of the filter"),
 ):
-    return await ArticleView.get_articles(
+    return await get_articles(
         page=page,
         search_query=search_query,
         tickers=tickers,
