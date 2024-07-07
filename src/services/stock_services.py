@@ -7,7 +7,7 @@ import requests
 from constants.env_consts import TINNGO_API_KEY
 
 
-def get_eod_data(ticker: str, start_date: str, end_date: str) -> dict:
+def get_eod_data(ticker: str, start_date: str, end_date: str) -> list:
     """
     Retrieves end-of-day stock price data from Tinngo for a given ticker and date range.
     """

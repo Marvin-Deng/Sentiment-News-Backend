@@ -9,7 +9,7 @@ from controllers import ticker_controller
 from constants.stock import TICKERS
 
 
-def get_eod_data(ticker: str, start_date: str, end_date: str) -> dict:
+def get_eod_data(ticker: str, start_date: str, end_date: str) -> list:
     """
     Retrieves end-of-day stock price data for a given ticker and date range.
     """

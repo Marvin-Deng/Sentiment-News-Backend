@@ -14,7 +14,7 @@ def get_tinngo_stock(
     ticker: str = Query(..., description="Ticker string"),
     start_date: str = Query(..., description="Starting date"),
     end_date: str = Query(..., description="Ending date"),
-) -> dict:
+) -> list:
     """
     Route for retrieving EOD stock data from Tinngo.
     """
