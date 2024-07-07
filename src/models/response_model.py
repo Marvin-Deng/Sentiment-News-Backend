@@ -1,3 +1,7 @@
+"""
+Module defining Pydantic models for articles and response.
+"""
+
 from typing import List, Optional
 from pydantic import BaseModel
 

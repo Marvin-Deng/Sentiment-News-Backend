@@ -1,3 +1,7 @@
+"""
+Module for article table.
+"""
+
 import re
 from tortoise.models import Model
 from tortoise.transactions import in_transaction
@@ -22,22 +26,25 @@ class ArticleModel(Model):
 
     @classmethod
     async def get_paged_articles(cls, search_params):
-        PAGE_SIZE = 10
-        keywords_list = cls.get_list_without_symbols(search_params["search_query"])
+        """
+        Retrieves a page of articles based on search parameters.
+        """
+        page_size = 10
+        keywords_list = cls._get_list_without_symbols(search_params["search_query"])
         sentiment_array = SENTIMENT_MAP.get(search_params["sentiment"], [])
-        offset = search_params["page"] * PAGE_SIZE
-        return await cls.get_articles(
+        offset = search_params["page"] * page_size
+        return await cls._get_articles(
             keywords=keywords_list,
             ticker_list=search_params["ticker_list"],
             sentiment_array=sentiment_array,
             price_action=search_params["price_action"],
             end_date=search_params["end_date"],
             offset=offset,
-            page_size=PAGE_SIZE,
+            page_size=page_size,
         )
 
     @staticmethod
-    async def get_articles(
+    async def _get_articles(
         keywords,
         ticker_list,
         sentiment_array,
@@ -46,6 +53,9 @@ class ArticleModel(Model):
         offset,
         page_size,
     ):
+        """
+        Retrieves articles based on search filters.
+        """
         async with in_transaction() as connection:
             query = """
                 SELECT 
@@ -102,7 +112,10 @@ class ArticleModel(Model):
             return await connection.execute_query_dict(query, params)
 
     @staticmethod
-    def get_list_without_symbols(input_string):
+    def _get_list_without_symbols(input_string):
+        """
+        Removes symbols from a string.
+        """
         words = input_string.split()
         processed_words = [re.sub(r"\W+", "", word.lower()) for word in words]
         return processed_words
