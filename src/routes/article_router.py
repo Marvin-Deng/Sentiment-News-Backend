@@ -14,15 +14,16 @@ async def get_news(
     sentiment: str = Query(..., description="Sentiment"),
     price_action: str = Query(..., description="Price action"),
     end_date: str = Query(..., description="Ending date of the filter"),
-):
-    return await article_view.get_articles(
-        page=page,
-        search_query=search_query,
-        tickers=tickers,
-        sentiment=sentiment,
-        price_action=price_action,
-        end_date=end_date,
-    )
+) -> ResponseModel:
+    request_data = {
+        "page": page,
+        "search_query": search_query,
+        "tickers": tickers,
+        "sentiment": sentiment,
+        "price_action": price_action,
+        "end_date": end_date,
+    }
+    return await article_view.get_articles(request_data)
 
 
 @router.get("/sentiments")

@@ -41,26 +41,22 @@ async def remove_articles() -> str:
     return await ArticleController.remove_articles(one_week_ago_date)
 
 
-async def get_articles(
-    page: int,
-    search_query: str,
-    tickers: list,
-    sentiment: str,
-    price_action: str,
-    end_date: str,
-) -> ResponseModel:
+async def get_articles(request_data: dict) -> ResponseModel:
     """
     Retrieves filtered news articles
     """
-    ticker_list = tickers.split(",") if len(tickers) != 0 else []
+    ticker_list = (
+        request_data["tickers"].split(",") if len(request_data["tickers"]) != 0 else []
+    )
+    end_date = request_data["end_date"]
     if len(end_date) == 0:
         end_date = datetime.date.today().strftime("%Y-%m-%d")
     search_params = {
-        "page": page,
-        "search_query": search_query,
+        "page": request_data["page"],
+        "search_query": request_data["search_query"],
         "ticker_list": ticker_list,
-        "sentiment": sentiment,
-        "price_action": price_action,
+        "sentiment": request_data["sentiment"],
+        "price_action": request_data["price_action"],
         "end_date": end_date,
     }
     message, response, status = await ArticleController.fetch_articles(search_params)
