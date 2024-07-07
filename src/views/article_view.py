@@ -6,7 +6,7 @@ import datetime
 from fastapi.responses import JSONResponse
 
 from services import article_services
-from controllers.article_controller import ArticleController
+from controllers import article_controller
 from models.response_model import ResponseModel
 from utils.logging_utils import LoggingUtils
 from constants.stock import TICKERS
@@ -24,7 +24,7 @@ async def process_articles() -> str:
             articles = article_services.get_articles(ticker, date_today, date_today)
             for article in articles:
                 if article["image"]:
-                    await ArticleController.create_article(article)
+                    await article_controller.create_article(article)
         return "Successfully processed articles"
 
     except Exception as e:
@@ -38,7 +38,7 @@ async def remove_articles() -> str:
     """
     one_week_ago = datetime.date.today() - datetime.timedelta(days=8)
     one_week_ago_date = one_week_ago.strftime("%Y-%m-%d")
-    return await ArticleController.remove_articles(one_week_ago_date)
+    return await article_controller.remove_articles(one_week_ago_date)
 
 
 async def get_articles(request_data: dict) -> ResponseModel:
@@ -59,7 +59,7 @@ async def get_articles(request_data: dict) -> ResponseModel:
         "price_action": request_data["price_action"],
         "end_date": end_date,
     }
-    message, response, status = await ArticleController.fetch_articles(search_params)
+    message, response, status = await article_controller.fetch_articles(search_params)
     return ResponseModel(message=message, articles=response, code=status)
 
 

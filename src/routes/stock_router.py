@@ -2,7 +2,6 @@
 Router for handling stock-related endpoints.
 """
 
-import json
 from fastapi import APIRouter, Query
 
 from views import stock_view
@@ -15,7 +14,7 @@ def get_tinngo_stock(
     ticker: str = Query(..., description="Ticker string"),
     start_date: str = Query(..., description="Starting date"),
     end_date: str = Query(..., description="Ending date"),
-) -> json:
+) -> dict:
     """
     Route for retrieving EOD stock data from Tinngo.
     """
@@ -23,7 +22,7 @@ def get_tinngo_stock(
 
 
 @router.get("/update")
-async def update_recent_tickers() -> str:
+async def update_recent_tickers():
     """
     Route for price action update cron job.
     """

@@ -2,7 +2,6 @@
 Functions for retrieving info from third-party article APIs.
 """
 
-import json
 import finnhub
 import requests
 
@@ -21,7 +20,7 @@ def get_articles(ticker: str, date_from: str, date_to: str) -> list:
         return None
 
 
-def get_sentiment(text: str) -> json:
+def get_sentiment(text: str) -> dict:
     """
     Analyzes sentiment for a given text using RapidAPI's sentiment analysis API.
     """

@@ -1,51 +1,52 @@
+"""
+Module for querying and updating ticker table.
+"""
+
+import datetime
+
 from models.ticker_model import TickerModel
 from utils.stock_utils import StockUtils
 from utils.logging_utils import LoggingUtils
 
 
-class TickerController:
+async def create_ticker(ticker: str, publication_datetime: datetime):
+    """
+    Create a new ticker entry if it doesn't already exist.
+    """
+    market_date = StockUtils.get_market_date(publication_datetime).strftime("%Y-%m-%d")
+    existing_ticker = await TickerModel.filter(ticker=ticker, market_date=market_date)
+    if existing_ticker:
+        return "Ticker already exists", existing_ticker[0], 409
 
-    @staticmethod
-    async def create_ticker(ticker, publication_datetime):
-        market_date = StockUtils.get_market_date(publication_datetime).strftime(
-            "%Y-%m-%d"
-        )
-        existing_ticker = await TickerModel.filter(
-            ticker=ticker, market_date=market_date
-        )
+    try:
+        stock_info = StockUtils.get_stock_info(ticker, market_date)
+        new_ticker = TickerModel(ticker=ticker, market_date=market_date, **stock_info)
+        await new_ticker.save()
+        return "Created new ticker", new_ticker, 201
 
-        if existing_ticker:
-            return "Ticker already exists", existing_ticker[0], 409
+    except Exception as e:
+        error_message = "Error occured in controllers.ticker_controller"
+        return LoggingUtils.log_error(e, error_message, None, 500)
 
-        try:
-            stock_info = StockUtils.get_stock_info(ticker, market_date)
-            new_ticker = TickerModel(
-                ticker=ticker, market_date=market_date, **stock_info
-            )
-            await new_ticker.save()
-            return "Created new ticker", new_ticker, 201
 
-        except Exception as e:
-            error_message = "Error occured in controllers.ticker_controller"
-            return LoggingUtils.log_error(e, error_message, None, 500)
+async def update_tickers(date_str: str):
+    """
+    Update price action for tickers on a specific date.
+    """
+    try:
+        tickers = await TickerModel.filter(market_date=date_str, open_price=None)
+        updated_tickers = []
+        for ticker_model in tickers:
+            stock_info = StockUtils.get_stock_info(ticker_model.ticker, date_str)
+            if not stock_info.get("open_price"):
+                continue
+            for key, value in stock_info.items():
+                if hasattr(ticker_model, key):
+                    setattr(ticker_model, key, value)
+            await ticker_model.save()
+            updated_tickers.append(ticker_model.ticker)
+        return "Successfully updated tickers", updated_tickers, 200
 
-    @staticmethod
-    async def update_tickers(date_str):
-        try:
-            tickers = await TickerModel.filter(market_date=date_str, open_price=None)
-            updated_tickers = []
-            for ticker_model in tickers:
-                stock_info = StockUtils.get_stock_info(ticker_model.ticker, date_str)
-                if stock_info.get("open_price") == None:
-                    continue
-                for key, value in stock_info.items():
-                    if hasattr(ticker_model, key):
-                        setattr(ticker_model, key, value)
-                await ticker_model.save()
-                updated_tickers.append(ticker_model.ticker)
-
-            return "Successfully updated tickers", updated_tickers, 200
-
-        except Exception as e:
-            error_message = "Error occured in controllers.update_tickers"
-            return LoggingUtils.log_error(e, error_message, None, 500)
+    except Exception as e:
+        error_message = "Error occured in controllers.update_tickers"
+        return LoggingUtils.log_error(e, error_message, None, 500)

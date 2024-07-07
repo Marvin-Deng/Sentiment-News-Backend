@@ -1,4 +1,4 @@
-from datetime import timedelta, time
+from datetime import datetime, date, timedelta, time
 
 from services.stock_services import get_eod_data
 
@@ -6,7 +6,7 @@ from services.stock_services import get_eod_data
 class StockUtils:
 
     @staticmethod
-    def get_market_date(article_datetime):
+    def get_market_date(article_datetime: datetime) -> date:
         published_date = article_datetime.date()
 
         if published_date.weekday() >= 5 or (
@@ -19,11 +19,11 @@ class StockUtils:
         return published_date
 
     @staticmethod
-    def after_market_closed(article_datetime):
+    def after_market_closed(article_datetime: datetime) -> bool:
         return article_datetime.time() >= time(21, 0)
 
     @staticmethod
-    def get_next_monday(date):
+    def get_next_monday(date: date) -> datetime:
         return date + timedelta(days=(7 - date.weekday()) % 7)
 
     @staticmethod
