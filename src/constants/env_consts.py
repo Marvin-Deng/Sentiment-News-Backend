@@ -1,3 +1,7 @@
+"""
+API and URL constants.
+"""
+
 import os
 from dotenv import load_dotenv
 

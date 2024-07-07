@@ -1,3 +1,7 @@
+"""
+Sentiment options constants.
+"""
+
 SENTIMENT = {
     "Positive": ["Optimistic", "Positive", "Stable"],
     "Negative": ["Pessimistic", "Negative"],

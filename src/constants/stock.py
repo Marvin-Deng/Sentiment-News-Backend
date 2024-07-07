@@ -1,3 +1,7 @@
+"""
+Ticker list constants.
+"""
+
 TICKERS = [
     "AAPL",
     "MSFT",
