@@ -1,6 +1,6 @@
 # Sentiment News Backend
 
-A simple REST API for a financial news sentiment [app](https://sentiment-news.vercel.app/) with Gemini for sentiment analysis.
+A simple REST API for a financial news sentiment [app](https://sentiment-news.vercel.app/) with Gemini for sentiment analysis. 
 
 [Frontend Repo](https://github.com/Marvin-Deng/Sentiment-News)
 
@@ -49,4 +49,22 @@ pip install -r requirements.txt
 
 ```shell
 hypercorn src/main:app --reload
+```
+
+## Black
+
+```shell
+black .
+```
+
+## Pylint
+
+```shell
+pylint **/*.py
+```
+
+## Updating requirements
+
+```shell
+pip freeze > requirements.txt
 ```

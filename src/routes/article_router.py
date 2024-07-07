@@ -26,6 +26,7 @@ async def get_news(
         end_date=end_date,
     )
 
+
 @router.get("/sentiments")
 def get_sentiments():
     return JSONResponse(content=SENTIMENT)

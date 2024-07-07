@@ -4,6 +4,7 @@ from .date_utils import DateUtils
 from gemini.gemini_model import gemini_analyze_sentiment
 from services.article_services import get_sentiment
 
+
 class ArticleUtils:
 
     @staticmethod

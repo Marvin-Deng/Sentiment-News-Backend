@@ -13,4 +13,3 @@ def get_eod_data(ticker, start_date, end_date):
 
     except Exception:
         return None
-
