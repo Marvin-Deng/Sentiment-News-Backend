@@ -16,7 +16,7 @@ async def update_tickers() -> str:
     return await TickerController.update_tickers(date_today)
 
 
-def get_ticker_list():
+def get_ticker_list() -> list:
     """
     Retrieves a list of tickers
     """
