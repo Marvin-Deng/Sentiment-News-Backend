@@ -5,20 +5,19 @@ Module for querying and updating article table.
 from models.article import ArticleModel
 from models.ticker import TickerModel
 from controllers import ticker_controller
-from utils.article_utils import ArticleUtils
-from utils.logging_utils import LoggingUtils
+from utils import logging_utils, article_utils
 
 
 async def create_article(article: dict):
     """
-    Adds a new article to the articles table.
+    Adds a new article to the article table.
     """
     existing_article = await ArticleModel.filter(article_id=article["id"])
     if existing_article:
         return "Creation failed, article already exists", existing_article[0], 409
 
     try:
-        article_data = ArticleUtils.get_article_info(article)
+        article_data = article_utils.get_article_info(article)
         _, ticker_object, _ = await ticker_controller.create_ticker(
             article_data["ticker"], article_data["publication_datetime"]
         )
@@ -38,7 +37,7 @@ async def create_article(article: dict):
 
     except Exception as e:
         error_message = "Error occured in article_controller.create_article"
-        return LoggingUtils.log_error(e, error_message, None, 500)
+        return logging_utils.log_error(e, error_message, None, 500)
 
 
 async def fetch_articles(search_params: dict):
@@ -51,7 +50,7 @@ async def fetch_articles(search_params: dict):
 
     except Exception as e:
         error_message = "Error occured in article_controller.fetch_articles"
-        return LoggingUtils.log_error(e, error_message, [], 500)
+        return logging_utils.log_error(e, error_message, [], 500)
 
 
 async def remove_articles(one_week_ago_date: str):
@@ -67,4 +66,4 @@ async def remove_articles(one_week_ago_date: str):
 
     except Exception as e:
         error_message = "Error occurred in article_controller.remove_articles"
-        return LoggingUtils.log_error(e, error_message, None, 500)
+        return logging_utils.log_error(e, error_message, None, 500)

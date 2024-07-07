@@ -18,7 +18,7 @@ def get_eod_data(ticker: str, start_date: str, end_date: str) -> list:
 
 async def update_tickers() -> str:
     """
-    Cron job for updating price action for each stock daily
+    Cron job for updating price action for each stock daily.
     """
     date_today = datetime.date.today().strftime("%Y-%m-%d")
     return await ticker_controller.update_tickers(date_today)
@@ -26,6 +26,6 @@ async def update_tickers() -> str:
 
 def get_ticker_list() -> list:
     """
-    Retrieves a list of tickers
+    Retrieves a list of tickers.
     """
     return TICKERS

@@ -8,18 +8,17 @@ from fastapi.responses import JSONResponse
 from services import article_services
 from controllers import article_controller
 from models.response import ResponseModel
-from utils.logging_utils import LoggingUtils
+from utils.logging_utils import log_error
 from constants.stock import TICKERS
 from constants.sentiment import SENTIMENT
 
 
 async def process_articles() -> str:
     """
-    Cron job for processing new articles daily
+    Cron job for processing new articles daily.
     """
     try:
         date_today = datetime.date.today().strftime("%Y-%m-%d")
-
         for ticker in TICKERS:
             articles = article_services.get_articles(ticker, date_today, date_today)
             for article in articles:
@@ -29,12 +28,12 @@ async def process_articles() -> str:
 
     except Exception as e:
         error_message = "An error occurred in article_views.process_articles"
-        return LoggingUtils.log_error(e, error_message, None, 500)
+        return log_error(e, error_message, None, 500)
 
 
 async def remove_articles() -> str:
     """
-    Cron job removing outdated articles every week
+    Cron job for removing outdated articles every week.
     """
     one_week_ago = datetime.date.today() - datetime.timedelta(days=8)
     one_week_ago_date = one_week_ago.strftime("%Y-%m-%d")
@@ -43,7 +42,7 @@ async def remove_articles() -> str:
 
 async def get_articles(request_data: dict) -> ResponseModel:
     """
-    Retrieves filtered news articles
+    Retrieves filtered news articles.
     """
     ticker_list = (
         request_data["tickers"].split(",") if len(request_data["tickers"]) != 0 else []
@@ -51,6 +50,7 @@ async def get_articles(request_data: dict) -> ResponseModel:
     end_date = request_data["end_date"]
     if len(end_date) == 0:
         end_date = datetime.date.today().strftime("%Y-%m-%d")
+
     search_params = {
         "page": request_data["page"],
         "search_query": request_data["search_query"],
@@ -59,12 +59,13 @@ async def get_articles(request_data: dict) -> ResponseModel:
         "price_action": request_data["price_action"],
         "end_date": end_date,
     }
+
     message, response, status = await article_controller.fetch_articles(search_params)
     return ResponseModel(message=message, articles=response, code=status)
 
 
 def get_sentiments() -> JSONResponse:
     """
-    Retrieves a sentiment json constants
+    Retrieves a sentiment json constants.
     """
     return JSONResponse(content=SENTIMENT)

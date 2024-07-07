@@ -1,70 +1,86 @@
+"""
+Module with stock utility functions for parsing stock info and calculating market date.
+"""
+
 from datetime import datetime, date, timedelta, time
 
-from services.stock_services import get_eod_data
+from services import stock_services
 
 
-class StockUtils:
+def get_stock_info(ticker: str, date_str: str) -> dict:
+    """
+    Parses the end of day data retuned by Tinngo API.
+    """
+    eod_data = stock_services.get_eod_data(
+        ticker=ticker, start_date=date_str, end_date=date_str
+    )
 
-    @staticmethod
-    def get_market_date(article_datetime: datetime) -> date:
-        published_date = article_datetime.date()
+    stock_info = {
+        "open_price": None,
+        "high_price": None,
+        "low_price": None,
+        "close_price": None,
+        "volume": None,
+        "adj_open": None,
+        "adj_high": None,
+        "adj_low": None,
+        "adj_close": None,
+        "adj_volume": None,
+        "div_cash": None,
+        "split_factor": None,
+    }
 
-        if published_date.weekday() >= 5 or (
-            published_date.weekday() == 4
-            and StockUtils.after_market_closed(article_datetime)
-        ):
-            return StockUtils.get_next_monday(published_date)
-        elif StockUtils.after_market_closed(article_datetime):
-            return published_date + timedelta(days=1)
-        return published_date
-
-    @staticmethod
-    def after_market_closed(article_datetime: datetime) -> bool:
-        return article_datetime.time() >= time(21, 0)
-
-    @staticmethod
-    def get_next_monday(date: date) -> datetime:
-        return date + timedelta(days=(7 - date.weekday()) % 7)
-
-    @staticmethod
-    def get_stock_info(ticker, date):
-        eod_data = get_eod_data(ticker, date, date)
-        stock_info = {
-            "open_price": None,
-            "high_price": None,
-            "low_price": None,
-            "close_price": None,
-            "volume": None,
-            "adj_open": None,
-            "adj_high": None,
-            "adj_low": None,
-            "adj_close": None,
-            "adj_volume": None,
-            "div_cash": None,
-            "split_factor": None,
+    if (
+        eod_data
+        and isinstance(eod_data, list)
+        and len(eod_data) > 0
+        and isinstance(eod_data[0], dict)
+    ):
+        keys_mapping = {
+            "open_price": "open",
+            "high_price": "high",
+            "low_price": "low",
+            "close_price": "close",
+            "volume": "volume",
+            "adj_open": "adjOpen",
+            "adj_high": "adjHigh",
+            "adj_low": "adjLow",
+            "adj_close": "adjClose",
+            "adj_volume": "adjVolume",
+            "div_cash": "divCash",
+            "split_factor": "splitFactor",
         }
 
-        if (
-            eod_data
-            and isinstance(eod_data, list)
-            and len(eod_data) > 0
-            and isinstance(eod_data[0], dict)
-        ):
-            stock_info.update(
-                {
-                    "open_price": eod_data[0].get("open", 0),
-                    "high_price": eod_data[0].get("high", 0),
-                    "low_price": eod_data[0].get("low", 0),
-                    "close_price": eod_data[0].get("close", 0),
-                    "volume": eod_data[0].get("volume", 0),
-                    "adj_open": eod_data[0].get("adjOpen", 0),
-                    "adj_high": eod_data[0].get("adjHigh", 0),
-                    "adj_low": eod_data[0].get("adjLow", 0),
-                    "adj_close": eod_data[0].get("adjClose", 0),
-                    "adj_volume": eod_data[0].get("adjVolume", 0),
-                    "div_cash": eod_data[0].get("divCash", 0),
-                    "split_factor": eod_data[0].get("splitFactor", 0),
-                }
-            )
+        for key, eod_key in keys_mapping.items():
+            stock_info[key] = eod_data[0].get(eod_key, None)
 
-        return stock_info
+    return stock_info
+
+
+def get_market_date(article_datetime: datetime) -> date:
+    """
+    Returns the next market open date after the article publication datetime.
+    """
+    published_date = article_datetime.date()
+    if published_date.weekday() >= 5 or (
+        published_date.weekday() == 4 and _after_market_closed(article_datetime)
+    ):
+        return _get_next_monday(published_date)
+    if _after_market_closed(article_datetime):
+        return published_date + timedelta(days=1)
+
+    return published_date
+
+
+def _after_market_closed(article_datetime: datetime) -> bool:
+    """
+    Returns if the provided datetime occurs after market close.
+    """
+    return article_datetime.time() >= time(21, 0)
+
+
+def _get_next_monday(date_obj: datetime) -> datetime:
+    """
+    Returns the next Monday from a datetime.
+    """
+    return date_obj + timedelta(days=(7 - date_obj.weekday()) % 7)
