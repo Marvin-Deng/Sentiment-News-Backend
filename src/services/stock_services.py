@@ -10,7 +10,7 @@ from constants.env_consts import TINNGO_API_KEY
 
 def get_eod_data(ticker: str, start_date: str, end_date: str) -> json:
     """
-    Retrieves end-of-day stock price data for a given ticker and date range.
+    Retrieves end-of-day stock price data from Tinngo for a given ticker and date range.
     """
     try:
         url = f"https://api.tiingo.com/tiingo/daily/{ticker}/prices"

@@ -1,6 +1,10 @@
+"""
+Router for handling article-related endpoints.
+"""
+
 from fastapi import APIRouter, Query
 
-import views.article_view as article_view
+from views import article_view
 from models.response_model import ResponseModel
 
 router = APIRouter()
@@ -15,6 +19,9 @@ async def get_news(
     price_action: str = Query(..., description="Price action"),
     end_date: str = Query(..., description="Ending date of the filter"),
 ) -> ResponseModel:
+    """
+    Route for retrieving filtered news articles based on query parameters.
+    """
     request_data = {
         "page": page,
         "search_query": search_query,
@@ -28,14 +35,23 @@ async def get_news(
 
 @router.get("/sentiments")
 def get_sentiments():
+    """
+    Route for retrieving sentiment list.
+    """
     return article_view.get_sentiments()
 
 
 @router.get("/process")
 async def process_recent_articles():
+    """
+    Route for article ingestion cron job.
+    """
     return await article_view.process_articles()
 
 
 @router.get("/remove")
 async def delete_old_articles():
+    """
+    Route for article removal cron job.
+    """
     return await article_view.remove_articles()

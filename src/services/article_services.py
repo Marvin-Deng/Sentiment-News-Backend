@@ -11,7 +11,7 @@ from constants.env_consts import FINNHUB_API_KEY, RAPID_API_KEY
 
 def get_articles(ticker: str, date_from: str, date_to: str) -> list:
     """
-    Retrieves company news articles for a given ticker and date range.
+    Retrieves company news articles from Finnhub for a given ticker and date range.
     """
     try:
         finnhub_client = finnhub.Client(api_key=FINNHUB_API_KEY)
@@ -23,7 +23,7 @@ def get_articles(ticker: str, date_from: str, date_to: str) -> list:
 
 def get_sentiment(text: str) -> json:
     """
-    Analyzes sentiment for a given text using a sentiment analysis API.
+    Analyzes sentiment for a given text using RapidAPI's sentiment analysis API.
     """
     try:
         url = "https://sentiment-analysis9.p.rapidapi.com/sentiment"

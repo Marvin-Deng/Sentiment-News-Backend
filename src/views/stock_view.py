@@ -2,10 +2,19 @@
 Functions for processing requests and responses related to stocks.
 """
 
+import json
 import datetime
 
+from services import stock_services
 from controllers.ticker_controller import TickerController
 from constants.stock import TICKERS
+
+
+def get_eod_data(ticker: str, start_date: str, end_date: str) -> json:
+    """
+    Retrieves end-of-day stock price data for a given ticker and date range.
+    """
+    return stock_services.get_eod_data(ticker, start_date, end_date)
 
 
 async def update_tickers() -> str:
