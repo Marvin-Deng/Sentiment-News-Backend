@@ -5,7 +5,7 @@ Router for handling article-related endpoints.
 from fastapi import APIRouter, Query
 
 from views import article_view
-from models.response_model import ResponseModel
+from models.response import ResponseModel
 
 router = APIRouter()
 

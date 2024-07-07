@@ -8,7 +8,7 @@ DB_CONFIG = {
     },
     "apps": {
         "models": {
-            "models": ["models.article_model", "models.ticker_model"],
+            "models": ["models.article", "models.ticker"],
             "default_connection": "default",
         }
     },

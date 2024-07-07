@@ -4,7 +4,7 @@ Module for querying and updating ticker table.
 
 import datetime
 
-from models.ticker_model import TickerModel
+from models.ticker import TickerModel
 from utils.stock_utils import StockUtils
 from utils.logging_utils import LoggingUtils
 

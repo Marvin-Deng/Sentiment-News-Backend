@@ -2,8 +2,8 @@
 Module for querying and updating article table.
 """
 
-from models.article_model import ArticleModel
-from models.ticker_model import TickerModel
+from models.article import ArticleModel
+from models.ticker import TickerModel
 from controllers import ticker_controller
 from utils.article_utils import ArticleUtils
 from utils.logging_utils import LoggingUtils

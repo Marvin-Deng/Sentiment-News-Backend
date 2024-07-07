@@ -7,7 +7,7 @@ from fastapi.responses import JSONResponse
 
 from services import article_services
 from controllers import article_controller
-from models.response_model import ResponseModel
+from models.response import ResponseModel
 from utils.logging_utils import LoggingUtils
 from constants.stock import TICKERS
 from constants.sentiment import SENTIMENT
