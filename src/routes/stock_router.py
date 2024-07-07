@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Query
 
-from constants.stock import TICKERS
-from views.stock_view import StockView
+import views.stock_view as stock_view
 from services.stock_services import get_eod_data
 
 router = APIRouter()
@@ -9,7 +8,7 @@ router = APIRouter()
 
 @router.get("/update")
 async def update_recent_tickers():
-    return await StockView.update_tickers()
+    return await stock_view.update_tickers()
 
 
 @router.get("/tinngo_stock_prices")
@@ -23,4 +22,4 @@ def get_tinngo_stock(
 
 @router.get("/tickers")
 def get_tickers():
-    return TICKERS
+    return stock_view.get_ticker_list()

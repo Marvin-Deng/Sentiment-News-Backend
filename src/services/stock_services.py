@@ -1,4 +1,3 @@
-import finnhub
 import requests
 
 from constants.env_consts import TINNGO_API_KEY
