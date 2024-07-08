@@ -22,7 +22,7 @@ def get_tinngo_stock(
 
 
 @router.get("/update")
-async def update_recent_tickers():
+async def update_recent_tickers() -> str:
     """
     Route for price action update cron job.
     """

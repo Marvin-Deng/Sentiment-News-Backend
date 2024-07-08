@@ -3,6 +3,7 @@ Router for handling article-related endpoints.
 """
 
 from fastapi import APIRouter, Query
+from fastapi.responses import JSONResponse
 
 from views import article_view
 from models.response import ResponseModel
@@ -33,16 +34,8 @@ async def get_news(
     return await article_view.get_articles(request_data)
 
 
-@router.get("/sentiments")
-def get_sentiments():
-    """
-    Route for retrieving sentiment list.
-    """
-    return article_view.get_sentiments()
-
-
 @router.get("/process")
-async def process_recent_articles():
+async def process_recent_articles() -> ResponseModel:
     """
     Route for article ingestion cron job.
     """
@@ -50,8 +43,16 @@ async def process_recent_articles():
 
 
 @router.get("/remove")
-async def delete_old_articles():
+async def delete_old_articles() -> ResponseModel:
     """
     Route for article removal cron job.
     """
     return await article_view.remove_articles()
+
+
+@router.get("/sentiments")
+def get_sentiments() -> JSONResponse:
+    """
+    Route for retrieving sentiment list.
+    """
+    return article_view.get_sentiments()

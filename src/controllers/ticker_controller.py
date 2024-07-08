@@ -8,7 +8,7 @@ from models.ticker import TickerModel
 from utils import logging_utils, stock_utils
 
 
-async def create_ticker(ticker: str, publication_datetime: datetime):
+async def create_ticker(ticker: str, publication_datetime: datetime) -> TickerModel:
     """
     Create a new ticker entry if it doesn't already exist.
     """
@@ -24,11 +24,11 @@ async def create_ticker(ticker: str, publication_datetime: datetime):
         return "Created new ticker", new_ticker, 201
 
     except Exception as e:
-        error_message = "Error occured in controllers.ticker_controller"
+        error_message = "Error occured in controllers.create_ticker"
         return logging_utils.log_error(e, error_message, None, 500)
 
 
-async def update_tickers(date_str: str):
+async def update_tickers(date_str: str) -> list:
     """
     Update price action for tickers on a specific date.
     """

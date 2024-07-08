@@ -66,6 +66,7 @@ def get_market_date(article_datetime: datetime) -> date:
         published_date.weekday() == 4 and _after_market_closed(article_datetime)
     ):
         return _get_next_monday(published_date)
+
     if _after_market_closed(article_datetime):
         return published_date + timedelta(days=1)
 

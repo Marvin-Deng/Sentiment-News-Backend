@@ -8,7 +8,7 @@ from controllers import ticker_controller
 from utils import logging_utils, article_utils
 
 
-async def create_article(article: dict):
+async def create_article(article: dict) -> None:
     """
     Adds a new article to the article table.
     """
@@ -33,14 +33,13 @@ async def create_article(article: dict):
             sentiment=article_data["sentiment"],
         )
         await new_article.save()
-        return "Created new article", new_article, 201
 
     except Exception as e:
         error_message = "Error occured in article_controller.create_article"
         return logging_utils.log_error(e, error_message, None, 500)
 
 
-async def fetch_articles(search_params: dict):
+async def fetch_articles(search_params: dict) -> list:
     """
     Fetch articles based on search parameters.
     """
@@ -53,7 +52,7 @@ async def fetch_articles(search_params: dict):
         return logging_utils.log_error(e, error_message, [], 500)
 
 
-async def remove_articles(one_week_ago_date: str):
+async def remove_articles(one_week_ago_date: str) -> list:
     """
     Remove articles from a week ago.
     """
@@ -62,7 +61,7 @@ async def remove_articles(one_week_ago_date: str):
         for ticker in tickers:
             await ArticleModel.filter(ticker=ticker).delete()
             await ticker.delete()
-        return "Successfully removed articles from last week"
+        return "Successfully removed articles from last week", tickers, 200
 
     except Exception as e:
         error_message = "Error occurred in article_controller.remove_articles"
