@@ -28,6 +28,7 @@ hpack==4.0.0
 Hypercorn==0.16.0
 hyperframe==6.0.1
 idna==3.7
+iniconfig==2.0.0
 iso8601==1.1.0
 isort==5.13.2
 mccabe==0.7.0
@@ -35,6 +36,7 @@ mypy-extensions==1.0.0
 packaging==24.1
 pathspec==0.12.1
 platformdirs==4.2.2
+pluggy==1.5.0
 priority==2.0.0
 proto-plus==1.23.0
 protobuf==4.25.3
@@ -44,6 +46,7 @@ pydantic==2.6.2
 pydantic_core==2.16.3
 pylint==3.2.5
 pypika-tortoise==0.1.6
+pytest==8.2.2
 python-dotenv==1.0.1
 pytz==2024.1
 requests==2.32.3

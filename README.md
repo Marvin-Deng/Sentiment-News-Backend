@@ -51,16 +51,16 @@ pip install -r requirements.txt
 hypercorn src/main:app --reload
 ```
 
-## Black
+## Formatting
 
 ```shell
 black .
 ```
 
-## Pylint
+## Testing
 
 ```shell
-pylint **/*.py
+pytest
 ```
 
 ## Updating requirements
