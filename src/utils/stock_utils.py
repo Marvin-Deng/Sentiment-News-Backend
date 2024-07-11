@@ -2,7 +2,7 @@
 Module with stock utility functions for parsing stock info and calculating market date.
 """
 
-from datetime import datetime, date, timedelta, time
+from datetime import datetime, timedelta, time
 
 from services import stock_services
 
@@ -57,7 +57,7 @@ def get_stock_info(ticker: str, date_str: str) -> dict:
     return stock_info
 
 
-def get_market_date(article_datetime: datetime) -> date:
+def get_market_date(article_datetime: datetime) -> datetime:
     """
     Returns the next market open date after the article publication datetime.
     """

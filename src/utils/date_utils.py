@@ -2,12 +2,12 @@
 Module with date utility functions.
 """
 
-from datetime import datetime, timezone
+from datetime import datetime
 
 
-def convert_unix_to_utc(unix: str) -> str:
+def convert_unix_to_utc(unix: int) -> str:
     """
-    Converts a UNIX time string to a UTC datetime string.
+    Converts a UNIX timestamp to a UTC datetime string.
     """
-    utc_datetime = datetime.fromtimestamp(unix, tz=timezone.utc)
+    utc_datetime = datetime.utcfromtimestamp(unix)
     return utc_datetime.strftime("%Y-%m-%d %H:%M:%S")
