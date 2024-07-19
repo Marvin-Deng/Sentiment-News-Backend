@@ -5,6 +5,7 @@ Router for handling stock-related endpoints.
 from fastapi import APIRouter, Query
 
 from views import stock_view
+from models.response import ResponseModel
 
 router = APIRouter()
 
@@ -22,7 +23,7 @@ def get_tinngo_stock(
 
 
 @router.get("/update")
-async def update_recent_tickers() -> str:
+async def update_recent_tickers() -> ResponseModel:
     """
     Route for price action update cron job.
     """
