@@ -48,8 +48,8 @@ async def update_tickers(date_str: str) -> list:
                     setattr(ticker_model, key, value)
             await ticker_model.save()
             updated_tickers.append(ticker_model.ticker)
-        return "Successfully updated tickers", updated_tickers, 200
+        return "SUCCESS", updated_tickers, 200
 
     except Exception as e:
-        error_message = "Error occured in controllers.update_tickers"
+        error_message = "ERROR in controllers.update_tickers"
         return log_exception_error(e, error_message, None, 500)

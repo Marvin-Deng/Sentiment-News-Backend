@@ -41,7 +41,7 @@ async def create_article(article: dict) -> str:
         return new_article.title
 
     except Exception as e:
-        error_message = "Error occured in article_controller.create_article"
+        error_message = "ERROR in article_controller.create_article"
         log_exception_error(e, error_message, None, 500)
 
 
@@ -51,10 +51,10 @@ async def fetch_articles(search_params: dict) -> list:
     """
     try:
         response = await ArticleModel.get_paged_articles(search_params)
-        return "Successfully queried articles", response, 200
+        return "SUCCESS", response, 200
 
     except Exception as e:
-        error_message = "Error occured in article_controller.fetch_articles"
+        error_message = "ERROR in article_controller.fetch_articles"
         return log_exception_error(e, error_message, [], 500)
 
 
@@ -67,8 +67,8 @@ async def remove_articles(one_week_ago_date: str) -> list:
         for ticker in tickers:
             await ArticleModel.filter(ticker=ticker).delete()
             await ticker.delete()
-        return "Successfully removed articles from last week", tickers, 200
+        return "SUCCESS", tickers, 200
 
     except Exception as e:
-        error_message = "Error occurred in article_controller.remove_articles"
+        error_message = "ERROR in article_controller.remove_articles"
         return log_exception_error(e, error_message, None, 500)
