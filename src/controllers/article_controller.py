@@ -18,7 +18,7 @@ async def create_article(article: dict) -> str:
         logger.warning(
             f"Creation failed, article already exists: {existing_article.article_id}"
         )
-        return None
+        return
 
     try:
         article_data = article_utils.get_article_info(article)

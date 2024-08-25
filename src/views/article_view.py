@@ -7,6 +7,7 @@ import datetime
 from fastapi.responses import JSONResponse
 
 from services import article_services
+from services.async_services import async_wrap_sync
 from controllers import article_controller
 from models.response import ResponseModel
 from utils import logging_utils
@@ -61,7 +62,9 @@ async def process_articles() -> ResponseModel:
             """
             Processes all available articles for a ticker.
             """
-            articles = article_services.get_articles(ticker, date_today, date_today)
+            articles = await async_wrap_sync(
+                article_services.get_articles, ticker, date_today, date_today
+            )
 
             async def add_article(article: dict) -> None:
                 id = article["id"]

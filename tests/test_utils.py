@@ -16,7 +16,6 @@ class TestStockUtilsAfterMarketClose(unittest.TestCase):
 
 class TestStockUtilsNextMarketDate(unittest.TestCase):
 
-
     def test_next_market_date_on_weekday_before_market_close_is_same_day(self):
         article_datetime = datetime(2024, 7, 8, 15, 0)
         result_date = stock_utils.get_market_date(article_datetime)

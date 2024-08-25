@@ -14,9 +14,11 @@ async def create_ticker(ticker: str, publication_datetime: datetime) -> TickerMo
     Create a new ticker entry if it doesn't already exist.
     """
     market_date = stock_utils.get_market_date(publication_datetime).strftime("%Y-%m-%d")
-    existing_ticker = await TickerModel.filter(ticker=ticker, market_date=market_date)
+    existing_ticker = await TickerModel.filter(
+        ticker=ticker, market_date=market_date
+    ).first()
     if existing_ticker:
-        return existing_ticker[0]
+        return existing_ticker
 
     try:
         stock_info = stock_utils.get_stock_info(ticker=ticker, date_str=market_date)
