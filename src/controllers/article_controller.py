@@ -36,7 +36,7 @@ async def create_article(article: dict) -> None:
 
     except Exception as e:
         error_message = "Error occured in article_controller.create_article"
-        return logging_utils.log_error(e, error_message, None, 500)
+        return logging_utils.log_exception_error(e, error_message, None, 500)
 
 
 async def fetch_articles(search_params: dict) -> list:
@@ -49,7 +49,7 @@ async def fetch_articles(search_params: dict) -> list:
 
     except Exception as e:
         error_message = "Error occured in article_controller.fetch_articles"
-        return logging_utils.log_error(e, error_message, [], 500)
+        return logging_utils.log_exception_error(e, error_message, [], 500)
 
 
 async def remove_articles(one_week_ago_date: str) -> list:
@@ -65,4 +65,4 @@ async def remove_articles(one_week_ago_date: str) -> list:
 
     except Exception as e:
         error_message = "Error occurred in article_controller.remove_articles"
-        return logging_utils.log_error(e, error_message, None, 500)
+        return logging_utils.log_exception_error(e, error_message, None, 500)

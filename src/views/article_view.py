@@ -41,7 +41,7 @@ async def get_articles(request_data: dict) -> ResponseModel:
 
     except Exception as e:
         error_message = "An error occurred in article_view.get_articles"
-        message, data, status = logging_utils.log_error(
+        message, data, status = logging_utils.log_exception_error(
             error=e, message=error_message, data=[], status=500
         )
 
@@ -85,7 +85,7 @@ async def process_articles() -> ResponseModel:
 
     except Exception as e:
         error_message = "An error occurred in article_view.process_articles"
-        message, data, status = logging_utils.log_error(
+        message, data, status = logging_utils.log_exception_error(
             error=e, message=error_message, data=[], status=500
         )
 
@@ -105,7 +105,7 @@ async def remove_articles() -> ResponseModel:
 
     except Exception as e:
         error_message = "An error occurred in article_view.remove_articles"
-        message, data, status = logging_utils.log_error(
+        message, data, status = logging_utils.log_exception_error(
             error=e, message=error_message, data=[], status=500
         )
 

@@ -25,7 +25,7 @@ async def create_ticker(ticker: str, publication_datetime: datetime) -> TickerMo
 
     except Exception as e:
         error_message = "Error occured in controllers.create_ticker"
-        return logging_utils.log_error(e, error_message, None, 500)
+        return logging_utils.log_exception_error(e, error_message, None, 500)
 
 
 async def update_tickers(date_str: str) -> list:
@@ -50,4 +50,4 @@ async def update_tickers(date_str: str) -> list:
 
     except Exception as e:
         error_message = "Error occured in controllers.update_tickers"
-        return logging_utils.log_error(e, error_message, None, 500)
+        return logging_utils.log_exception_error(e, error_message, None, 500)
