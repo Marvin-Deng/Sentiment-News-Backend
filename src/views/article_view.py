@@ -55,6 +55,7 @@ async def process_articles() -> ResponseModel:
     try:
         date_today = datetime.date.today().strftime("%Y-%m-%d")
         titles = []
+        processed = set()
 
         async def process_ticker_articles(ticker: str) -> None:
             """
@@ -63,10 +64,12 @@ async def process_articles() -> ResponseModel:
             articles = article_services.get_articles(ticker, date_today, date_today)
 
             async def add_article(article: dict) -> None:
-                await article_controller.create_article(article)
-                title = article.get("title", "")
-                if title:
-                    titles.append(title)
+                id = article["id"]
+                if id not in processed:
+                    processed.add(id)
+                    title = await article_controller.create_article(article)
+                    if title:
+                        titles.append(title)
 
             tasks = [
                 add_article(article) for article in articles if article.get("image", "")

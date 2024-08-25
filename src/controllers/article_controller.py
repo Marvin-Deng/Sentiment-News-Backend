@@ -5,20 +5,24 @@ Module for querying and updating article table.
 from models.article import ArticleModel
 from models.ticker import TickerModel
 from controllers import ticker_controller
-from utils import logging_utils, article_utils
+from utils import article_utils
+from utils.logging_utils import logger, log_exception_error
 
 
-async def create_article(article: dict) -> None:
+async def create_article(article: dict) -> str:
     """
     Adds a new article to the article table.
     """
-    existing_article = await ArticleModel.filter(article_id=article["id"])
+    existing_article = await ArticleModel.filter(article_id=article["id"]).first()
     if existing_article:
-        return "Creation failed, article already exists", existing_article[0], 409
+        logger.warning(
+            f"Creation failed, article already exists: {existing_article.article_id}"
+        )
+        return None
 
     try:
         article_data = article_utils.get_article_info(article)
-        _, ticker_object, _ = await ticker_controller.create_ticker(
+        ticker_object = await ticker_controller.create_ticker(
             article_data["ticker"], article_data["publication_datetime"]
         )
 
@@ -33,10 +37,12 @@ async def create_article(article: dict) -> None:
             sentiment=article_data["sentiment"],
         )
         await new_article.save()
+        logger.info(f"New article created: {new_article.article_id}")
+        return new_article.title
 
     except Exception as e:
         error_message = "Error occured in article_controller.create_article"
-        return logging_utils.log_exception_error(e, error_message, None, 500)
+        log_exception_error(e, error_message, None, 500)
 
 
 async def fetch_articles(search_params: dict) -> list:
@@ -49,7 +55,7 @@ async def fetch_articles(search_params: dict) -> list:
 
     except Exception as e:
         error_message = "Error occured in article_controller.fetch_articles"
-        return logging_utils.log_exception_error(e, error_message, [], 500)
+        return log_exception_error(e, error_message, [], 500)
 
 
 async def remove_articles(one_week_ago_date: str) -> list:
@@ -65,4 +71,4 @@ async def remove_articles(one_week_ago_date: str) -> list:
 
     except Exception as e:
         error_message = "Error occurred in article_controller.remove_articles"
-        return logging_utils.log_exception_error(e, error_message, None, 500)
+        return log_exception_error(e, error_message, None, 500)

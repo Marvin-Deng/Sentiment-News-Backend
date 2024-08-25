@@ -5,7 +5,8 @@ Module for querying and updating ticker table.
 import datetime
 
 from models.ticker import TickerModel
-from utils import logging_utils, stock_utils
+from utils import stock_utils
+from utils.logging_utils import log_exception_error
 
 
 async def create_ticker(ticker: str, publication_datetime: datetime) -> TickerModel:
@@ -15,17 +16,16 @@ async def create_ticker(ticker: str, publication_datetime: datetime) -> TickerMo
     market_date = stock_utils.get_market_date(publication_datetime).strftime("%Y-%m-%d")
     existing_ticker = await TickerModel.filter(ticker=ticker, market_date=market_date)
     if existing_ticker:
-        return "Ticker already exists", existing_ticker[0], 409
+        return existing_ticker[0]
 
     try:
         stock_info = stock_utils.get_stock_info(ticker=ticker, date_str=market_date)
         new_ticker = TickerModel(ticker=ticker, market_date=market_date, **stock_info)
         await new_ticker.save()
-        return "Created new ticker", new_ticker, 201
+        return new_ticker
 
     except Exception as e:
-        error_message = "Error occured in controllers.create_ticker"
-        return logging_utils.log_exception_error(e, error_message, None, 500)
+        log_exception_error(e, str(e), None, 500)
 
 
 async def update_tickers(date_str: str) -> list:
@@ -50,4 +50,4 @@ async def update_tickers(date_str: str) -> list:
 
     except Exception as e:
         error_message = "Error occured in controllers.update_tickers"
-        return logging_utils.log_exception_error(e, error_message, None, 500)
+        return log_exception_error(e, error_message, None, 500)
