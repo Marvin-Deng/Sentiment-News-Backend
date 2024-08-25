@@ -4,18 +4,17 @@ Functions for processing requests and responses related to articles.
 
 import asyncio
 import datetime
-from fastapi.responses import JSONResponse
 
 from services import article_services
 from services.async_services import async_wrap_sync
 from controllers import article_controller
-from models.response import ResponseModel
-from utils import logging_utils
+from models.response import Status, ArticleResponse, CronResponse, SentimentResponse
+from utils.logging_utils import log_exception_error
 from constants.stock import TICKERS
 from constants.sentiment import SENTIMENT
 
 
-async def get_articles(request_data: dict) -> ResponseModel:
+async def get_articles(request_data: dict) -> ArticleResponse:
     """
     Retrieves filtered news articles.
     """
@@ -38,18 +37,22 @@ async def get_articles(request_data: dict) -> ResponseModel:
             "end_date": end_date,
         }
 
-        message, data, status = await article_controller.fetch_articles(search_params)
+        message, data, rcode = await article_controller.fetch_articles(search_params)
 
     except Exception as e:
         error_message = "An error occurred in article_view.get_articles"
-        message, data, status = logging_utils.log_exception_error(
+        message, data, rcode = log_exception_error(
             error=e, message=error_message, data=[], status=500
         )
 
-    return ResponseModel(message=message, data=data, status=status)
+    return ArticleResponse(
+        status=Status(message=message, rcode=rcode),
+        num_returned=len(data),
+        articles=data,
+    )
 
 
-async def process_articles() -> ResponseModel:
+async def process_articles() -> CronResponse:
     """
     Cron job for processing new articles daily.
     """
@@ -83,7 +86,7 @@ async def process_articles() -> ResponseModel:
         tasks = [process_ticker_articles(ticker) for ticker in TICKERS]
         await asyncio.gather(*tasks)
 
-        message, data, status = (
+        message, data, rcode = (
             "Successfully processed articles",
             titles,
             200,
@@ -91,35 +94,46 @@ async def process_articles() -> ResponseModel:
 
     except Exception as e:
         error_message = "An error occurred in article_view.process_articles"
-        message, data, status = logging_utils.log_exception_error(
+        message, data, rcode = log_exception_error(
             error=e, message=error_message, data=[], status=500
         )
 
-    return ResponseModel(message=message, data=data, status=status)
+    return CronResponse(
+        status=Status(message=message, rcode=rcode),
+        num_returned=len(data),
+        processed=data,
+    )
 
 
-async def remove_articles() -> ResponseModel:
+async def remove_articles() -> CronResponse:
     """
     Cron job for removing outdated articles every week.
     """
     try:
         one_week_ago = datetime.date.today() - datetime.timedelta(days=8)
         one_week_ago_date = one_week_ago.strftime("%Y-%m-%d")
-        message, data, status = await article_controller.remove_articles(
+        message, data, rcode = await article_controller.remove_articles(
             one_week_ago_date
         )
 
     except Exception as e:
-        error_message = "An error occurred in article_view.remove_articles"
-        message, data, status = logging_utils.log_exception_error(
+        error_message = "ERROR in article_view.remove_articles"
+        message, data, rcode = log_exception_error(
             error=e, message=error_message, data=[], status=500
         )
 
-    return ResponseModel(message=message, data=data, status=status)
+    return CronResponse(
+        status=Status(message=message, rcode=rcode),
+        num_returned=len(data),
+        processed=data,
+    )
 
 
-def get_sentiments() -> JSONResponse:
+def get_sentiments() -> SentimentResponse:
     """
     Retrieves a sentiment json constants.
     """
-    return JSONResponse(content=SENTIMENT)
+    return SentimentResponse(
+        status=Status(message="SUCCESS", rcode=200),
+        sentiment=SENTIMENT,
+    )

@@ -1,12 +1,36 @@
 """
-Module defining Pydantic models for articles and response.
+Pydantic models for articles and response.
 """
 
 from pydantic import BaseModel
-from typing import List
 
 
-class ResponseModel(BaseModel):
+class Status(BaseModel):
+    rcode: int
     message: str
-    data: List
-    status: int
+
+
+class Response(BaseModel):
+    status: Status
+
+
+class CronResponse(Response):
+    num_returned: int
+    processed: list
+
+
+class SentimentResponse(Response):
+    sentiment: dict
+
+
+class TickerResponse(Response):
+    tickers: list
+
+
+class EodResponse(Response):
+    eod_data: list
+
+
+class ArticleResponse(Response):
+    num_returned: int
+    articles: list
