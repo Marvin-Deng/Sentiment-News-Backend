@@ -2,6 +2,7 @@
 Functions for processing requests and responses related to articles.
 """
 
+import asyncio
 import datetime
 from fastapi.responses import JSONResponse
 
@@ -53,16 +54,34 @@ async def process_articles() -> ResponseModel:
     """
     try:
         date_today = datetime.date.today().strftime("%Y-%m-%d")
-        processed_tickers = []
-        for ticker in TICKERS:
+        titles = []
+
+        async def process_ticker_articles(ticker: str) -> None:
+            """
+            Processes all available articles for a ticker.
+            """
             articles = article_services.get_articles(ticker, date_today, date_today)
-            for article in articles:
-                if article["image"]:
-                    await article_controller.create_article(article)
-                    processed_tickers.append(ticker)
-        message = "Successfully processed articles"
-        data = processed_tickers
-        status = 200
+
+            async def add_article(article: dict) -> None:
+                await article_controller.create_article(article)
+                title = article.get("title", "")
+                if title:
+                    titles.append(title)
+
+            tasks = [
+                add_article(article) for article in articles if article.get("image", "")
+            ]
+            if tasks:
+                await asyncio.gather(*tasks)
+
+        tasks = [process_ticker_articles(ticker) for ticker in TICKERS]
+        await asyncio.gather(*tasks)
+
+        message, data, status = (
+            "Successfully processed articles",
+            titles,
+            200,
+        )
 
     except Exception as e:
         error_message = "An error occurred in article_view.process_articles"
