@@ -22,10 +22,10 @@ def get_tinngo_stock(
     return stock_view.get_eod_data(ticker, start_date, end_date)
 
 
-@router.get("/update", response_model=CronResponse)
+@router.patch("/tickers", response_model=CronResponse)
 async def update_recent_tickers():
     """
-    Route for price action update cron job.
+    Route for ticker price update cron job.
     """
     return await stock_view.update_tickers()
 

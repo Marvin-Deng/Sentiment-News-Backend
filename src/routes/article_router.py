@@ -33,18 +33,18 @@ async def get_news(
     return await article_view.get_articles(request_data)
 
 
-@router.get("/process", response_model=CronResponse)
-async def process_recent_articles():
+@router.post("/news", response_model=CronResponse)
+async def ingest_recent_articles():
     """
     Route for article ingestion cron job.
     """
-    return await article_view.process_articles()
+    return await article_view.ingest_articles()
 
 
-@router.get("/remove", response_model=CronResponse)
+@router.delete("/news", response_model=CronResponse)
 async def delete_old_articles():
     """
-    Route for article removal cron job.
+    Route for article deletion cron job.
     """
     return await article_view.remove_articles()
 
