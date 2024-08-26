@@ -26,18 +26,13 @@ async def get_articles(request_data: dict) -> ArticleResponse:
             if len(request_data["tickers"]) != 0
             else []
         )
-
-        end_date = request_data["end_date"]
-        if len(end_date) == 0:
-            end_date = datetime.today().strftime("%Y-%m-%d")
-
         search_params = {
             "page": request_data["page"],
             "search_query": request_data["search_query"],
             "ticker_list": ticker_list,
             "sentiment": request_data["sentiment"],
             "price_action": request_data["price_action"],
-            "end_date": end_date,
+            "end_date": request_data["end_date"],
         }
 
         message, data, rcode = await article_controller.fetch_articles(search_params)
