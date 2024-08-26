@@ -11,7 +11,7 @@ def get_stock_info(ticker: str, date_str: str) -> dict:
     """
     Parses the end of day data retuned by Tinngo API.
     """
-    eod_data = stock_services.get_eod_data(
+    _, eod_data, _ = stock_services.get_eod_data_tinngo(
         ticker=ticker, start_date=date_str, end_date=date_str
     )
 

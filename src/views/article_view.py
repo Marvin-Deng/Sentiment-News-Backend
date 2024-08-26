@@ -6,7 +6,7 @@ import asyncio
 from datetime import datetime, timedelta
 
 from services import article_services
-from services.async_services import async_wrap_sync
+from services.async_wrapper import async_wrap_sync
 from controllers import article_controller, ticker_controller
 from models.response import Status, ArticleResponse, CronResponse, SentimentResponse
 from utils.logging_utils import log_exception_error
@@ -29,7 +29,7 @@ async def get_articles(request_data: dict) -> ArticleResponse:
 
         end_date = request_data["end_date"]
         if len(end_date) == 0:
-            end_date = datetime.date.today().strftime("%Y-%m-%d")
+            end_date = datetime.today().strftime("%Y-%m-%d")
 
         search_params = {
             "page": request_data["page"],
@@ -69,7 +69,7 @@ async def ingest_articles() -> CronResponse:
             Processes all available articles for a ticker.
             """
             articles = await async_wrap_sync(
-                article_services.get_articles, ticker, date_today, date_today
+                article_services.get_articles_finnhub, ticker, date_today, date_today
             )
 
             async def add_article(article: dict, ticker_object: TickerModel) -> None:
@@ -98,12 +98,7 @@ async def ingest_articles() -> CronResponse:
 
         tasks = [process_ticker_articles(ticker) for ticker in TICKERS]
         await asyncio.gather(*tasks)
-
-        message, data, rcode = (
-            "Successfully processed articles",
-            titles,
-            200,
-        )
+        message, data, rcode = "SUCCESS", titles, 200
 
     except Exception as e:
         error_message = "An error occurred in article_view.process_articles"

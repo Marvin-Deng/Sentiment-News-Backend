@@ -15,10 +15,19 @@ def get_eod_data(ticker: str, start_date: str, end_date: str) -> EodResponse:
     """
     Retrieves end-of-day stock price data for a given ticker and date range.
     """
-    data = stock_services.get_eod_data(ticker, start_date, end_date)
+    try:
+        message, data, rcode = stock_services.get_eod_data_tinngo(
+            ticker, start_date, end_date
+        )
+
+    except Exception as e:
+        error_message = "An error occurred in stock_view.get_eod_data"
+        message, data, rcode = log_exception_error(
+            error=e, message=error_message, data=[], status=500
+        )
 
     return EodResponse(
-        status=Status(message="SUCCESS", rcode=200),
+        status=Status(message=message, rcode=rcode),
         num_returned=len(data),
         eod_data=data,
     )

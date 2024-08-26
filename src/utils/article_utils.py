@@ -5,7 +5,6 @@ Module with article utility functions for parsing and sentiment analysis.
 from datetime import datetime
 
 from utils.date_utils import convert_unix_to_utc
-from gemini.gemini_model import gemini_analyze_sentiment
 from services import article_services
 
 
@@ -36,22 +35,22 @@ def _evaluate_sentiment(title: str, summary: str) -> str:
     """
     Evaluates the sentiment of an article using either Gemini or RapidAPI.
     """
-    sentiment = gemini_analyze_sentiment(
+    sentiment = article_services.get_sentiment_gemini(
         f"{title}: {summary}"
-    ) or _api_evaluate_sentiment(title, summary)
+    ) or _fastapi_evaluate_sentiment(title, summary)
 
     return sentiment.title()
 
 
-def _api_evaluate_sentiment(title: str, summary: str) -> str:
+def _fastapi_evaluate_sentiment(title: str, summary: str) -> str:
     """
     Evaluates the sentiment of an article using RapidAPI.
     """
-    summary_json = article_services.get_sentiment(summary)
+    summary_json = article_services.get_sentiment_fastapi(summary)
     if summary_json:
         return _api_extract_sentiment(summary_json)
 
-    sentiment_json = article_services.get_sentiment(title)
+    sentiment_json = article_services.get_sentiment_fastapi(title)
     if sentiment_json:
         return _api_extract_sentiment(sentiment_json)
 
