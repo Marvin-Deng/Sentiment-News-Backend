@@ -17,7 +17,7 @@ def get_articles(ticker: str, date_from: str, date_to: str) -> list:
         return finnhub_client.company_news(ticker, _from=date_from, to=date_to)
 
     except Exception:
-        return None
+        return []
 
 
 def get_sentiment(text: str) -> dict:
@@ -37,4 +37,4 @@ def get_sentiment(text: str) -> dict:
         return response.json()
 
     except Exception:
-        return None
+        return ""

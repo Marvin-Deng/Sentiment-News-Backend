@@ -3,15 +3,17 @@ Functions for processing requests and responses related to articles.
 """
 
 import asyncio
-import datetime
+from datetime import datetime, timedelta
 
 from services import article_services
 from services.async_services import async_wrap_sync
-from controllers import article_controller
+from controllers import article_controller, ticker_controller
 from models.response import Status, ArticleResponse, CronResponse, SentimentResponse
 from utils.logging_utils import log_exception_error
 from constants.stock import TICKERS
 from constants.sentiment import SENTIMENT
+from utils.logging_utils import logger
+from models.ticker import TickerModel
 
 
 async def get_articles(request_data: dict) -> ArticleResponse:
@@ -24,6 +26,7 @@ async def get_articles(request_data: dict) -> ArticleResponse:
             if len(request_data["tickers"]) != 0
             else []
         )
+
         end_date = request_data["end_date"]
         if len(end_date) == 0:
             end_date = datetime.date.today().strftime("%Y-%m-%d")
@@ -52,12 +55,12 @@ async def get_articles(request_data: dict) -> ArticleResponse:
     )
 
 
-async def process_articles() -> CronResponse:
+async def ingest_articles() -> CronResponse:
     """
     Cron job for processing new articles daily.
     """
     try:
-        date_today = datetime.date.today().strftime("%Y-%m-%d")
+        date_today = datetime.today().strftime("%Y-%m-%d")
         titles = []
         processed = set()
 
@@ -69,18 +72,28 @@ async def process_articles() -> CronResponse:
                 article_services.get_articles, ticker, date_today, date_today
             )
 
-            async def add_article(article: dict) -> None:
+            async def add_article(article: dict, ticker_object: TickerModel) -> None:
                 id = article["id"]
                 if id not in processed:
                     processed.add(id)
-                    title = await article_controller.create_article(article)
+                    title = await article_controller.create_article(
+                        article=article, ticker_object=ticker_object
+                    )
                     if title:
                         titles.append(title)
 
-            tasks = [
-                add_article(article) for article in articles if article.get("image", "")
+            valid_articles = [
+                article for article in articles if article.get("image", "")
             ]
-            if tasks:
+            if valid_articles:
+                logger.info(f"Found {len(valid_articles)} articles for {ticker}")
+                ticker_object = await ticker_controller.create_ticker(
+                    ticker=ticker, publication_datetime=datetime.today()
+                )
+                tasks = [
+                    add_article(article=article, ticker_object=ticker_object)
+                    for article in valid_articles
+                ]
                 await asyncio.gather(*tasks)
 
         tasks = [process_ticker_articles(ticker) for ticker in TICKERS]
@@ -110,11 +123,9 @@ async def remove_articles() -> CronResponse:
     Cron job for removing outdated articles every week.
     """
     try:
-        one_week_ago = datetime.date.today() - datetime.timedelta(days=8)
-        one_week_ago_date = one_week_ago.strftime("%Y-%m-%d")
-        message, data, rcode = await article_controller.remove_articles(
-            one_week_ago_date
-        )
+        week_ago_str = datetime.today() - timedelta(days=8)
+        week_ago_date = week_ago_str.strftime("%Y-%m-%d")
+        message, data, rcode = await article_controller.remove_articles(week_ago_date)
 
     except Exception as e:
         error_message = "ERROR in article_view.remove_articles"

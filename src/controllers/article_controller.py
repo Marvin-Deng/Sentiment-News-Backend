@@ -4,12 +4,11 @@ Module for querying and updating article table.
 
 from models.article import ArticleModel
 from models.ticker import TickerModel
-from controllers import ticker_controller
 from utils import article_utils
 from utils.logging_utils import logger, log_exception_error
 
 
-async def create_article(article: dict) -> str:
+async def create_article(article: dict, ticker_object: TickerModel) -> str:
     """
     Adds a new article to the article table.
     """
@@ -22,10 +21,6 @@ async def create_article(article: dict) -> str:
 
     try:
         article_data = article_utils.get_article_info(article)
-        ticker_object = await ticker_controller.create_ticker(
-            article_data["ticker"], article_data["publication_datetime"]
-        )
-
         new_article = ArticleModel(
             article_id=article_data["id"],
             title=article_data["title"],
@@ -37,7 +32,9 @@ async def create_article(article: dict) -> str:
             sentiment=article_data["sentiment"],
         )
         await new_article.save()
-        logger.info(f"New article created: {new_article.article_id}")
+        logger.info(
+            f"Created new article: {ticker_object.ticker} on {ticker_object.market_date}"
+        )
         return new_article.title
 
     except Exception as e:

@@ -6,24 +6,28 @@ import datetime
 
 from models.ticker import TickerModel
 from utils import stock_utils
-from utils.logging_utils import log_exception_error
+from utils.logging_utils import logger, log_exception_error
 
 
 async def create_ticker(ticker: str, publication_datetime: datetime) -> TickerModel:
     """
-    Create a new ticker entry if it doesn't already exist.
+    Creates a new ticker entry if it doesn't already exist.
     """
     market_date = stock_utils.get_market_date(publication_datetime).strftime("%Y-%m-%d")
     existing_ticker = await TickerModel.filter(
         ticker=ticker, market_date=market_date
     ).first()
     if existing_ticker:
+        logger.warning(
+            f"Failed to create new ticker, ticker already exists: {existing_ticker.ticker} on {existing_ticker.market_date}"
+        )
         return existing_ticker
 
     try:
         stock_info = stock_utils.get_stock_info(ticker=ticker, date_str=market_date)
         new_ticker = TickerModel(ticker=ticker, market_date=market_date, **stock_info)
         await new_ticker.save()
+        logger.info(f"Created ticker {new_ticker.ticker} on {new_ticker.market_date}")
         return new_ticker
 
     except Exception as e:
