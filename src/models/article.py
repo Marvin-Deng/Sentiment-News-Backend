@@ -7,7 +7,7 @@ from tortoise.models import Model
 from tortoise.transactions import in_transaction
 from tortoise.fields import IntField, CharField, TextField, ForeignKeyField
 
-from constants.sentiment import SENTIMENT_MAP
+from config.sentiment import SENTIMENT_MAP
 
 
 class ArticleModel(Model):

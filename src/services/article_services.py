@@ -6,8 +6,8 @@ import finnhub
 import requests
 import google.generativeai as genai
 
-from constants.env_consts import FINNHUB_API_KEY, RAPID_API_KEY, GEMINI_API_KEY
-from constants.sentiment import SENTIMENT_OPTIONS
+from config.env import FINNHUB_API_KEY, RAPID_API_KEY, GEMINI_API_KEY
+from config.sentiment import SENTIMENT_OPTIONS
 from utils.logging_utils import logger
 
 genai.configure(api_key=GEMINI_API_KEY)

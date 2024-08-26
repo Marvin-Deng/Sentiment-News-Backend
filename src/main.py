@@ -3,8 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from routes.article_router import router as article_router
 from routes.stock_router import router as stock_router
-from constants.env_consts import CLIENT_URL
-from db import init_db
+from config.env import CLIENT_URL
+from config.db import init_db
 
 app = FastAPI()
 

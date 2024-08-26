@@ -4,7 +4,7 @@ Functions for retrieving info from third-party stock APIs.
 
 import requests
 
-from constants.env_consts import TINNGO_API_KEY
+from config.env import TINNGO_API_KEY
 from utils.logging_utils import logger, log_exception_error
 
 

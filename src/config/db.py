@@ -1,6 +1,6 @@
 from tortoise import Tortoise
 
-from constants.env_consts import DATABASE_URL
+from config.env import DATABASE_URL
 
 DB_CONFIG = {
     "connections": {

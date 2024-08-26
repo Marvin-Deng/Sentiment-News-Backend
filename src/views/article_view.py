@@ -10,8 +10,8 @@ from services.async_wrapper import async_wrap_sync
 from controllers import article_controller, ticker_controller
 from models.response import Status, ArticleResponse, CronResponse, SentimentResponse
 from utils.logging_utils import log_exception_error
-from constants.stock import TICKERS
-from constants.sentiment import SENTIMENT
+from config.stock import TICKERS
+from config.sentiment import SENTIMENT
 from utils.logging_utils import logger
 from models.ticker import TickerModel
 

@@ -7,7 +7,7 @@ import datetime
 from models.response import Status, EodResponse, CronResponse, TickerResponse
 from services import stock_services
 from controllers import ticker_controller
-from constants.stock import TICKERS
+from config.stock import TICKERS
 from utils.logging_utils import log_exception_error
 
 
